@@ -24,10 +24,6 @@ $ curl -X POST "http://localhost:8080/transfers" --data '{"user_id"}' | jq .
 
 ## Diagrams
 
-### Models
-
-![Models diagram](./docs/models.png)
-
 ### Archicture
 
 ![Architecture diagram](./docs/architecture.png)
@@ -35,3 +31,7 @@ $ curl -X POST "http://localhost:8080/transfers" --data '{"user_id"}' | jq .
 ### Sequence
 
 ![Sequence diagram](./docs/sequence.png)
+
+### Models
+
+![Models diagram](./docs/models.png)
