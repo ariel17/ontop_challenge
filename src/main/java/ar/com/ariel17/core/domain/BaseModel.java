@@ -1,5 +1,7 @@
 package ar.com.ariel17.core.domain;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 
 public abstract class BaseModel<T> {
@@ -8,7 +10,7 @@ public abstract class BaseModel<T> {
 
     protected Date createdAt;
 
-    public void setId(T id) {
+    public void setId(@NotNull T id) {
         this.id = id;
     }
 
@@ -16,7 +18,7 @@ public abstract class BaseModel<T> {
         return id;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(@NotNull Date createdAt) {
         this.createdAt = createdAt;
     }
 
