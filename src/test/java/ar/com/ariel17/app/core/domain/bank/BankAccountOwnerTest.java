@@ -21,6 +21,7 @@ public class BankAccountOwnerTest extends ValidatorTest {
 
     @BeforeEach
     public void setUp() {
+        super.setUp();
         account = new BankAccount(1234, 1234, Currency.getInstance("USD"));
     }
 

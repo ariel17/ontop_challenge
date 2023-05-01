@@ -3,6 +3,7 @@ package ar.com.ariel17.app.core.domain.bank;
 import ar.com.ariel17.app.core.domain.ValidatorTest;
 import ar.com.ariel17.core.domain.bank.BankAccount;
 import jakarta.validation.ConstraintViolation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,6 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class BankAccountTest extends ValidatorTest {
+
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+    }
 
     @Test
     public void testInvalidValues() {
