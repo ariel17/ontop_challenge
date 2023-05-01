@@ -1,11 +1,10 @@
 package ar.com.ariel17.app.core.domain.bank;
 
+import ar.com.ariel17.app.core.domain.ValidatorTest;
 import ar.com.ariel17.core.domain.bank.BankAccount;
 import ar.com.ariel17.core.domain.bank.BankAccountOwner;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,15 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
-public class BankAccountOwnerTest {
+public class BankAccountOwnerTest extends ValidatorTest {
 
-    private static Validator validator;
+    private BankAccount account;
 
-    private static BankAccount account;
-
-    @BeforeAll
-    public static void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
+    @BeforeEach
+    public void setUp() {
         account = new BankAccount(1234, 1234, Currency.getInstance("USD"));
     }
 
