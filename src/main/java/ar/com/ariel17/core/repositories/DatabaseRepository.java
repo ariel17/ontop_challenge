@@ -13,5 +13,5 @@ public interface DatabaseRepository<T, E extends Throwable> {
      * @param obj The object to store.
      * @throws E Raised when the operation fails.
      */
-    void save(T obj) throws E;
+    T save(T obj) throws E;
 }

@@ -1,6 +1,7 @@
 package ar.com.ariel17.core.services.transaction;
 
 import ar.com.ariel17.core.domain.bank.BankAccountOwner;
+import ar.com.ariel17.core.domain.transaction.Transaction;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,5 +19,5 @@ public interface TransactionService {
      * @param recipient The bank account owner data to transfer money to.
      * @param amount The amount of money to egress.
      */
-    void transfer(Long userId, BankAccountOwner recipient, BigDecimal amount) throws TransactionException;
+    Transaction transfer(Long userId, BankAccountOwner recipient, BigDecimal amount) throws TransactionException;
 }

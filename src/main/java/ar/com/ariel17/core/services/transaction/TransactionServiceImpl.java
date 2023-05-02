@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
     private MovementRepository movementRepository;
 
     @Override
-    public void transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
+    public Transaction transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
 
         try {
             recipientRepository.save(recipient);
@@ -72,7 +72,7 @@ public class TransactionServiceImpl implements TransactionService {
             paymentRepository.save(payment);
 
             transaction.setPaymentId(payment.getId());
-            movementRepository.save(transaction.getMovements());
+            transaction = movementRepository.save(transaction);
 
         } catch (PaymentProviderApiException e) {
             Long transactionId;
@@ -88,5 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (Exception e) {
             throw new TransactionException(e);
         }
+
+        return transaction;
     }
 }
