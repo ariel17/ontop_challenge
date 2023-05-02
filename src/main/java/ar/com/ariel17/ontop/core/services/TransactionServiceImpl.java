@@ -7,9 +7,14 @@ import ar.com.ariel17.ontop.core.clients.WalletApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import ar.com.ariel17.ontop.core.domain.Transaction;
-import ar.com.ariel17.ontop.core.repositories.*;
+import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
+import ar.com.ariel17.ontop.core.repositories.LockRepository;
+import ar.com.ariel17.ontop.core.repositories.MovementRepository;
+import ar.com.ariel17.ontop.core.repositories.PaymentRepository;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,13 +25,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     private static final int INSUFFICIENT_BALANCE = -1;
 
+    @Autowired
+    private ApplicationContext context;
+
     private BankAccountRepository bankAccountRepository;
 
     private BankAccountOwner sourceOwner;
 
     private TransactionFactory transactionFactory;
-
-    private LockService lockService;
 
     private WalletApi walletAPI;
 
@@ -49,10 +55,8 @@ public class TransactionServiceImpl implements TransactionService {
         BigDecimal total = transaction.total();
         Long walletTransactionId = null;
 
-        try (LockRepository lockRepository = lockService.createLockForUserId(userId)) {
-            boolean acquired = lockRepository.acquire();
-
-            if (!acquired) {
+        try (LockRepository lockRepository = context.getBean(LockRepository.class, userId)) {
+            if (!lockRepository.acquire()) {
                 throw new TransactionException(String.format("Lock for user %d could not be acquired", userId));
             }
 
