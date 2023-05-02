@@ -15,8 +15,7 @@ import java.util.Currency;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RecipientServiceImplTest {
@@ -44,5 +43,11 @@ public class RecipientServiceImplTest {
     @Test
     public void testCreateRecipient_null() {
         assertThrows(IllegalArgumentException.class, () -> service.createRecipient(null));
+    }
+
+    @Test
+    public void testCreateRecipient_failed() throws RecipientRepositoryException {
+        doThrow(new RecipientRepositoryException("mocked exception")).when(repository).save(any(BankAccountOwner.class));
+        assertThrows(RecipientException.class, () -> service.createRecipient(owner));
     }
 }
