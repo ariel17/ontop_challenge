@@ -4,6 +4,7 @@ import ar.com.ariel17.core.domain.BaseModel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 /**
  * Recipient contains data about a bank account and owner.
  */
+@Validated
 public class BankAccountOwner extends BaseModel<Integer> {
 
     @Positive(message = "User ID has to be positive")

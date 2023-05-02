@@ -2,12 +2,14 @@ package ar.com.ariel17.core.domain.bank;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Currency;
 
 /**
  * BankAccount represents the minimal data required to identify a bank account.
  */
+@Validated
 public class BankAccount {
 
     @Positive(message = "Routing number has to be positive")
