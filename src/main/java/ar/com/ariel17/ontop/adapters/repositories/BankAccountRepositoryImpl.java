@@ -1,5 +1,8 @@
 package ar.com.ariel17.ontop.adapters.repositories;
 
+import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerEntity;
+import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerMapper;
+import ar.com.ariel17.ontop.adapters.repositories.jpa.JpaBankAccountRepository;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import lombok.NonNull;
