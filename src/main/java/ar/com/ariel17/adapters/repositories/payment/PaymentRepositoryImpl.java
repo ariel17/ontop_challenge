@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class PaymentRepositoryImpl implements PaymentRepository {
 
     @Override
-    public void save(Payment obj) throws PaymentRepositoryException {
-
+    public Payment save(Payment obj) throws PaymentRepositoryException {
+        return null;
     }
 }

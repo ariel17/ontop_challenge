@@ -14,8 +14,9 @@ public class RecipientRepositoryImpl implements RecipientRepository {
     private JpaRecipientRepository jpaRepository;
 
     @Override
-    public void save(@NonNull BankAccountOwner obj) throws RecipientRepositoryException {
+    public BankAccountOwner save(@NonNull BankAccountOwner obj) throws RecipientRepositoryException {
         BankAccountOwnerEntity entity = BankAccountOwnerMapper.INSTANCE.bankAccountOwnerToBankAccountOwnerEntity(obj);
-        jpaRepository.save(entity);
+        entity = jpaRepository.save(entity);
+        return BankAccountOwnerMapper.INSTANCE.bankAccountOwnerEntityToBankAccountOwner(entity);
     }
 }
