@@ -1,0 +1,15 @@
+package ar.com.ariel17.core.services;
+
+import ar.com.ariel17.core.repositories.LockRepository;
+import ar.com.ariel17.core.services.LockService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LockServiceImpl implements LockService {
+
+    @Override
+    public LockRepository createLockForUserId(Long userId) {
+        // TODO added by force :(
+        return null;
+    }
+}

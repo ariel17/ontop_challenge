@@ -1,0 +1,93 @@
+package ar.com.ariel17.core.services;
+
+import ar.com.ariel17.core.clients.PaymentProviderApi;
+import ar.com.ariel17.core.clients.PaymentProviderApiException;
+import ar.com.ariel17.core.clients.WalletApi;
+import ar.com.ariel17.core.clients.WalletApiException;
+import ar.com.ariel17.core.domain.Payment;
+import ar.com.ariel17.core.domain.BankAccountOwner;
+import ar.com.ariel17.core.domain.Transaction;
+import ar.com.ariel17.core.repositories.LockRepository;
+import ar.com.ariel17.core.repositories.MovementRepository;
+import ar.com.ariel17.core.repositories.PaymentRepository;
+import ar.com.ariel17.core.repositories.RecipientRepository;
+import ar.com.ariel17.core.repositories.RecipientRepositoryException;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+
+@Service
+@AllArgsConstructor
+public class TransactionServiceImpl implements TransactionService {
+
+    private static final int INSUFFICIENT_BALANCE = -1;
+
+    private RecipientRepository recipientRepository;
+
+    private BankAccountOwner sourceOwner;
+
+    private TransactionFactory transactionFactory;
+
+    private LockService lockService;
+
+    private WalletApi walletAPI;
+
+    private PaymentProviderApi paymentProviderAPI;
+
+    private PaymentRepository paymentRepository;
+
+    private MovementRepository movementRepository;
+
+    @Override
+    public Transaction transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
+
+        try {
+            recipientRepository.save(recipient);
+        } catch (RecipientRepositoryException e) {
+            throw new TransactionException(e);
+        }
+
+        Transaction transaction = transactionFactory.createEgress(userId, sourceOwner, recipient, amount);
+        BigDecimal total = transaction.total();
+        Long walletTransferId = null;
+
+        try (LockRepository lockRepository = lockService.createLockForUserId(userId)) {
+            boolean acquired = lockRepository.acquire();
+
+            if (!acquired) {
+                throw new TransactionException(String.format("Lock for user %d could not be acquired", userId));
+            }
+
+            if (walletAPI.getBalance(userId).compareTo(total) == INSUFFICIENT_BALANCE) {
+                throw new TransactionException("Balance is insufficient to complete transaction");
+            }
+
+            walletTransferId = walletAPI.createTransaction(userId, total.negate());
+            transaction.setWalletTransactionId(walletTransferId);
+
+            Payment payment = paymentProviderAPI.createPayment(sourceOwner, recipient, amount);
+            paymentRepository.save(payment);
+
+            transaction.setPaymentId(payment.getId());
+            transaction = movementRepository.save(transaction);
+
+        } catch (PaymentProviderApiException e) {
+            Long transactionId;
+            try {
+                transactionId = walletAPI.createTransaction(userId, total);
+            } catch (WalletApiException ex) {
+                throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", walletTransferId), e);
+            }
+
+            // TODO log transaction id
+            throw new TransactionException(e);
+
+        } catch (Exception e) {
+            throw new TransactionException(e);
+        }
+
+        return transaction;
+    }
+}

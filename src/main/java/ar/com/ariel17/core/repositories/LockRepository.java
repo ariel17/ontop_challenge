@@ -1,7 +1,5 @@
 package ar.com.ariel17.core.repositories;
 
-import ar.com.ariel17.core.repositories.movement.MovementRepositoryException;
-
 /**
  * LockRepository is the contract for lock mechanism repository.
  */

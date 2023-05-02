@@ -1,8 +1,8 @@
 package ar.com.ariel17;
 
-import ar.com.ariel17.core.domain.bank.BankAccount;
-import ar.com.ariel17.core.domain.bank.BankAccountOwner;
-import ar.com.ariel17.core.services.transaction.TransactionFactory;
+import ar.com.ariel17.core.domain.BankAccount;
+import ar.com.ariel17.core.domain.BankAccountOwner;
+import ar.com.ariel17.core.services.TransactionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
