@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -17,7 +16,6 @@ import java.util.UUID;
  * Movement represents a money displace. Relates the wallet user with a bank
  * account transaction.
  */
-@Validated
 @TypeAndAccounts(message = "Invalid combination for `type`, `from` and `to fields.")
 @AllArgsConstructor
 @Data

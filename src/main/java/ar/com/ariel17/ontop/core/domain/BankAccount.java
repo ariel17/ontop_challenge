@@ -4,14 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Currency;
 
 /**
  * BankAccount represents the minimal data required to identify a bank account.
  */
-@Validated
 @AllArgsConstructor
 @Data
 public class BankAccount {

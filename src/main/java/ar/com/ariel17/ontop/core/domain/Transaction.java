@@ -1,7 +1,6 @@
 package ar.com.ariel17.ontop.core.domain;
 
 import lombok.NonNull;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.UUID;
 /**
  * Transaction represents a group of movements related to the same operation.
  */
-@Validated
 public class Transaction {
 
     private final List<Movement> movements;

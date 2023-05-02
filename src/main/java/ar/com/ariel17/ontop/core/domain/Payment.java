@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,7 +12,6 @@ import java.util.UUID;
 /**
  * Payment contains the external provider's operation result.
  */
-@Validated
 @AllArgsConstructor
 @Data
 public class Payment {

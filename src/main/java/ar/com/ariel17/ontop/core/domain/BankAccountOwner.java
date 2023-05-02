@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -12,7 +11,6 @@ import java.util.Date;
 /**
  * Recipient contains data about a bank account and owner.
  */
-@Validated
 @AllArgsConstructor
 @Data
 public class BankAccountOwner {
