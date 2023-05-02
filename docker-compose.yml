@@ -1,0 +1,15 @@
+---
+services:
+  api:
+    build: .
+    depends_on:
+      - redis
+    ports:
+      - "8090:8090"
+    links:
+      - "redis"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
