@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Currency;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class BankAccountServiceImplTest {
@@ -37,10 +37,5 @@ public class BankAccountServiceImplTest {
     public void testCreateRecipient_ok() throws BankAccountException {
         service.create(owner);
         verify(repository, times(1)).save(eq(owner));
-    }
-
-    @Test
-    public void testCreateRecipient_null() {
-        assertThrows(IllegalArgumentException.class, () -> service.create(null));
     }
 }

@@ -15,5 +15,5 @@ public interface BankAccountService {
      *
      * @param account The recipient to create.
      */
-    void create(BankAccountOwner account) throws BankAccountException;
+    void create(BankAccountOwner account);
 }

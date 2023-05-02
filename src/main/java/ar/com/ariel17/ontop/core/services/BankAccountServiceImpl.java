@@ -15,7 +15,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     private BankAccountRepository repository;
 
     @Override
-    public void create(@NonNull BankAccountOwner account) throws BankAccountException {
+    public void create(@NonNull BankAccountOwner account) {
         repository.save(account);
     }
 }

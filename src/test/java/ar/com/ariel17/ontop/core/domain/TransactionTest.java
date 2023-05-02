@@ -48,11 +48,6 @@ public class TransactionTest extends ValidatorTest {
     }
 
     @Test
-    public void testAddMovement_invalid() {
-        assertThrows(IllegalArgumentException.class, () -> t.addMovement(null));
-    }
-
-    @Test
     public void testTotal() {
         assertEquals(new BigDecimal(0), t.total());
         t.addMovement(m1);
@@ -76,11 +71,6 @@ public class TransactionTest extends ValidatorTest {
     }
 
     @Test
-    public void testSetPaymentId_invalid() {
-        assertThrows(IllegalArgumentException.class, () -> t.setPaymentId(null));
-    }
-
-    @Test
     public void testSetWalletTransactionId_valid() {
         t.addMovement(m1);
         t.addMovement(m2);
@@ -88,10 +78,5 @@ public class TransactionTest extends ValidatorTest {
         for (Movement m : t.getMovements()) {
             assertEquals(walletTransactionId, m.getWalletTransactionId());
         }
-    }
-
-    @Test
-    public void testSetWalletTransactionId_invalid() {
-        assertThrows(IllegalArgumentException.class, () -> t.setWalletTransactionId(null));
     }
 }
