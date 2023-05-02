@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class TransactionServiceImplTest {
 
     @Mock
-    private RecipientRepository recipientRepository;
+    private BankAccountRepository bankAccountRepository;
 
     private BankAccountOwner sourceOwner;
 
@@ -65,7 +65,7 @@ public class TransactionServiceImplTest {
         BigDecimal feePercent = new BigDecimal("0.1");
         transactionFactory = new TransactionFactory(feePercent);
 
-        service = new TransactionServiceImpl(recipientRepository, sourceOwner, transactionFactory, lockService, walletAPI, paymentProviderAPI, paymentRepository, movementRepository);
+        service = new TransactionServiceImpl(bankAccountRepository, sourceOwner, transactionFactory, lockService, walletAPI, paymentProviderAPI, paymentRepository, movementRepository);
 
         userId = 10L;
 
@@ -92,7 +92,7 @@ public class TransactionServiceImplTest {
 
         Transaction transaction = service.transfer(userId, recipient, amount);
 
-        verify(recipientRepository, times(1)).save(eq(recipient));
+        verify(bankAccountRepository, times(1)).save(eq(recipient));
 
         verify(lockRepository, times(1)).close();
 
@@ -107,8 +107,8 @@ public class TransactionServiceImplTest {
     }
 
     @Test
-    public void testTransfer_recipientRepositoryFails() throws RecipientRepositoryException {
-        doThrow(new RecipientRepositoryException("mocked exception")).when(recipientRepository).save(eq(recipient));
+    public void testTransfer_recipientRepositoryFails() {
+        doThrow(new RuntimeException("mocked exception")).when(bankAccountRepository).save(eq(recipient));
 
         assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
     }
@@ -234,11 +234,11 @@ public class TransactionServiceImplTest {
         Payment response = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
         when(paymentProviderAPI.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
 
-        Mockito.doThrow(new MovementRepositoryException("mocked exception")).when(movementRepository).save(any(Transaction.class));
+        Mockito.doThrow(new RuntimeException("mocked exception")).when(movementRepository).save(any(Transaction.class));
 
         assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
 
-        verify(recipientRepository, times(1)).save(eq(recipient));
+        verify(bankAccountRepository, times(1)).save(eq(recipient));
 
         verify(lockRepository, times(1)).close();
     }

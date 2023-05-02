@@ -5,7 +5,7 @@ package ar.com.ariel17.ontop.core.repositories;
  *
  * @param <T> Object type to store.
  */
-public interface DatabaseRepository<T, E extends Throwable> {
+public interface DatabaseRepository<T> {
 
     /**
      * Saves the object into database as record.
@@ -13,5 +13,5 @@ public interface DatabaseRepository<T, E extends Throwable> {
      * @param obj The object to store.
      * @throws E Raised when the operation fails.
      */
-    T save(T obj) throws E;
+    T save(T obj);
 }

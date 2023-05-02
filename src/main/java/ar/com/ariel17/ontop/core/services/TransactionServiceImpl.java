@@ -20,7 +20,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private static final int INSUFFICIENT_BALANCE = -1;
 
-    private RecipientRepository recipientRepository;
+    private BankAccountRepository bankAccountRepository;
 
     private BankAccountOwner sourceOwner;
 
@@ -40,8 +40,8 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
 
         try {
-            recipientRepository.save(recipient);
-        } catch (RecipientRepositoryException e) {
+            bankAccountRepository.save(recipient);
+        } catch (Exception e) {
             throw new TransactionException(e);
         }
 

@@ -2,8 +2,7 @@ package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
-import ar.com.ariel17.ontop.core.repositories.RecipientRepository;
-import ar.com.ariel17.ontop.core.repositories.RecipientRepositoryException;
+import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,13 +17,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RecipientServiceImplTest {
+public class BankAccountServiceImplTest {
 
     @Mock
-    private RecipientRepository repository;
+    private BankAccountRepository repository;
 
     @InjectMocks
-    private RecipientServiceImpl service;
+    private BankAccountServiceImpl service;
 
     private BankAccountOwner owner;
 
@@ -35,19 +34,13 @@ public class RecipientServiceImplTest {
     }
 
     @Test
-    public void testCreateRecipient_ok() throws RecipientException, RecipientRepositoryException {
-        service.createRecipient(owner);
+    public void testCreateRecipient_ok() throws BankAccountException {
+        service.create(owner);
         verify(repository, times(1)).save(eq(owner));
     }
 
     @Test
     public void testCreateRecipient_null() {
-        assertThrows(IllegalArgumentException.class, () -> service.createRecipient(null));
-    }
-
-    @Test
-    public void testCreateRecipient_failed() throws RecipientRepositoryException {
-        doThrow(new RecipientRepositoryException("mocked exception")).when(repository).save(any(BankAccountOwner.class));
-        assertThrows(RecipientException.class, () -> service.createRecipient(owner));
+        assertThrows(IllegalArgumentException.class, () -> service.create(null));
     }
 }
