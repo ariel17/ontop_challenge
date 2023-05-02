@@ -1,10 +1,11 @@
 package ar.com.ariel17.core.domain.transaction;
 
-import ar.com.ariel17.core.domain.BaseModel;
 import ar.com.ariel17.core.domain.bank.BankAccount;
 import ar.com.ariel17.core.domain.transaction.validators.NonZeroBigDecimal;
 import ar.com.ariel17.core.domain.transaction.validators.TypeAndAccounts;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,94 +19,40 @@ import java.util.UUID;
  * account transaction.
  */
 @Validated
-@TypeAndAccounts(message="Invalid combination for `type`, `from` and `to fields.")
-public class Movement extends BaseModel<Integer> {
+@TypeAndAccounts(message = "Invalid combination for `type`, `from` and `to fields.")
+@AllArgsConstructor
+@Data
+public class Movement {
 
-    private Integer userId;
+    private Long id;
 
-    @NotNull(message="Type cannot be null")
+    @NotNull(message = "User ID cannot be null")
+    private Long userId;
+
+    @NotNull(message = "Type cannot be null")
     private Type type;
 
-    @NotNull(message="Operation cannot be null")
+    @NotNull(message = "Operation cannot be null")
     private Operation operation;
 
-    @NotNull(message="Currency cannot be null")
+    @NotNull(message = "Currency cannot be null")
     private Currency currency;
 
-    @NonZeroBigDecimal(message="Amount cannot be zero")
+    @NonZeroBigDecimal(message = "Amount cannot be zero")
     private BigDecimal amount;
 
     private BankAccount from;
 
     private BankAccount to;
 
-    private Integer walletTransactionId;
+    private Long walletTransactionId;
 
     private UUID paymentId;
 
-    /**
-     * Creates a new movement.
-     *
-     * @param id The unique id for this movement. If null, the movement was not yet stored.
-     * @param userId
-     * @param type
-     * @param operation
-     * @param currency
-     * @param amount
-     * @param from
-     * @param to
-     * @param walletTransactionId
-     * @param paymentId
-     * @param createdAt The movement creation date. If null, the movement was not yet stored.
-     */
-    public Movement(Integer id, Integer userId, Type type, Operation operation, Currency currency, BigDecimal amount, BankAccount from, BankAccount to, Integer walletTransactionId, UUID paymentId, Date createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.type = type;
-        this.operation = operation;
-        this.currency = currency;
-        this.amount = amount;
-        this.from = from;
-        this.to = to;
-        this.paymentId = paymentId;
+    private Date createdAt;
+
+    public void setWalletTransactionId(@NonNull Long walletTransactionId) {
         this.walletTransactionId = walletTransactionId;
-        this.createdAt = createdAt;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public Operation getOperation() {
-        return operation;
-    }
-
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public BankAccount getFrom() {
-        return from;
-    }
-
-    public BankAccount getTo() {
-        return to;
-    }
-
-    public void setWalletTransactionId(@NonNull Integer walletTransactionId) {
-        this.walletTransactionId = walletTransactionId;
-    }
-
-    public Integer getWalletTransactionId() {
-        return this.walletTransactionId;
     }
 
     public void setPaymentId(@NonNull UUID paymentId) {
@@ -113,10 +60,6 @@ public class Movement extends BaseModel<Integer> {
             throw new IllegalArgumentException("Cannot set payment ID to a fee movement");
         }
         this.paymentId = paymentId;
-    }
-
-    public UUID getPaymentId() {
-        return paymentId;
     }
 
     /**

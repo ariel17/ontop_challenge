@@ -54,7 +54,7 @@ public class Transaction {
         }
     }
 
-    public void setWalletTransactionId(@NonNull Integer walletTransactionId) {
+    public void setWalletTransactionId(@NonNull Long walletTransactionId) {
         for (Movement movement: movements) {
             movement.setWalletTransactionId(walletTransactionId);
         }
