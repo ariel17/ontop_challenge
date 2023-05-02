@@ -2,7 +2,6 @@ package ar.com.ariel17.core.domain.bank;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
@@ -20,13 +19,13 @@ public class BankAccountOwner {
 
     private Long id;
 
-    @Positive(message = "User ID has to be positive")
+    @NotNull(message = "User ID cannot be null")
     private Long userId;
 
     @NotNull(message = "Bank account cannot be null")
     private BankAccount bankAccount;
 
-    @NotBlank(message = "ID number cannot be blank")
+    @NotNull(message = "ID number cannot be null")
     private String idNumber;
 
     @NotBlank(message = "First name cannot be blank")
