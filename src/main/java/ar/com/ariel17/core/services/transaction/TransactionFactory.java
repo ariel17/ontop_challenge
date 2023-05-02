@@ -5,7 +5,7 @@ import ar.com.ariel17.core.domain.transaction.Movement;
 import ar.com.ariel17.core.domain.transaction.Operation;
 import ar.com.ariel17.core.domain.transaction.Transaction;
 import ar.com.ariel17.core.domain.transaction.Type;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -24,7 +24,7 @@ public class TransactionFactory {
      *
      * @param feePercent The amount of fee to apply on the operation, if required.
      */
-    public TransactionFactory(@NotNull final BigDecimal feePercent) {
+    public TransactionFactory(@NonNull BigDecimal feePercent) {
         this.feePercent = feePercent;
     }
 
@@ -37,7 +37,7 @@ public class TransactionFactory {
      * @param amount The amount of currency to egress.
      * @return The transaction with associated movements.
      */
-    public Transaction createEgress(@NotNull final Integer userId, @NotNull final BankAccountOwner from, @NotNull final BankAccountOwner to, @NotNull final BigDecimal amount) throws TransactionException {
+    public Transaction createEgress(@NonNull Long userId, @NonNull BankAccountOwner from, @NonNull BankAccountOwner to, @NonNull BigDecimal amount) throws TransactionException {
         Currency currency = from.getBankAccount().getCurrency();
 
         if (!currency.equals(to.getBankAccount().getCurrency())) {
