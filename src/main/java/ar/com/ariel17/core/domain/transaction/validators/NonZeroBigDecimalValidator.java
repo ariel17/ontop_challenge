@@ -1,4 +1,4 @@
-package ar.com.ariel17.core.domain.validators;
+package ar.com.ariel17.core.domain.transaction.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

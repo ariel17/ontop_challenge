@@ -1,10 +1,11 @@
 package ar.com.ariel17.core.domain.transaction;
 
 import ar.com.ariel17.core.domain.BaseModel;
-import ar.com.ariel17.core.domain.Validable;
 import ar.com.ariel17.core.domain.bank.BankAccount;
-import ar.com.ariel17.core.domain.validators.NonZeroBigDecimal;
+import ar.com.ariel17.core.domain.transaction.validators.NonZeroBigDecimal;
+import ar.com.ariel17.core.domain.transaction.validators.TypeAndAccounts;
 import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
@@ -17,7 +18,8 @@ import java.util.UUID;
  * account transaction.
  */
 @Validated
-public class Movement extends BaseModel<Integer> implements Validable {
+@TypeAndAccounts(message="Invalid combination for `type`, `from` and `to fields.")
+public class Movement extends BaseModel<Integer> {
 
     private Integer userId;
 
@@ -98,7 +100,7 @@ public class Movement extends BaseModel<Integer> implements Validable {
         return to;
     }
 
-    public void setWalletTransactionId(@NotNull final Integer walletTransactionId) {
+    public void setWalletTransactionId(@NonNull Integer walletTransactionId) {
         this.walletTransactionId = walletTransactionId;
     }
 
@@ -106,20 +108,15 @@ public class Movement extends BaseModel<Integer> implements Validable {
         return this.walletTransactionId;
     }
 
-    public void setPaymentId(@NotNull final UUID paymentId) {
+    public void setPaymentId(@NonNull UUID paymentId) {
+        if (type == Type.FEE) {
+            throw new IllegalArgumentException("Cannot set payment ID to a fee movement");
+        }
         this.paymentId = paymentId;
     }
 
     public UUID getPaymentId() {
         return paymentId;
-    }
-
-    @Override
-    public boolean isValid() {
-        if (type == Type.FEE) {
-            return from == null && to == null;
-        }
-        return from != null && to != null && from != to;
     }
 
     /**
@@ -129,12 +126,6 @@ public class Movement extends BaseModel<Integer> implements Validable {
      * @return True if the object has payment ID and is valid.
      */
     public boolean isComplete() {
-        if (walletTransactionId == null) {
-            return false;
-        }
-        if (type != Type.FEE && paymentId == null) {
-            return false;
-        }
-        return isValid();
+        return walletTransactionId != null && (type == Type.FEE || paymentId != null);
     }
 }
