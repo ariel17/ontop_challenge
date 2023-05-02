@@ -1,4 +1,4 @@
-package ar.com.ariel17.ontop.adapters.repositories;
+package ar.com.ariel17.ontop.adapters.repositories.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ public class BankAccountOwnerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     @Column(nullable = false)
@@ -32,16 +32,16 @@ public class BankAccountOwnerEntity {
     @Column(nullable = false, length = 3)
     private Currency currency;
 
-    @Column(nullable = false, length = 15)
+    @Column(name = "id_number", nullable = false, length = 15)
     private String idNumber;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
-    @Column(nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     @CreationTimestamp
     private Date createdAt;
 }

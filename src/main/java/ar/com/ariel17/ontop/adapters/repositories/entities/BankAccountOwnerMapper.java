@@ -1,4 +1,4 @@
-package ar.com.ariel17.ontop.adapters.repositories;
+package ar.com.ariel17.ontop.adapters.repositories.entities;
 
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import org.mapstruct.Mapper;
