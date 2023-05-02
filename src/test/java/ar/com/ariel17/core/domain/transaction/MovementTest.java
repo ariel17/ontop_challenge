@@ -45,7 +45,7 @@ public class MovementTest extends ValidatorTest {
         Set<ConstraintViolation<Movement>> violations = validator.validate(
                 new Movement(null, null, null, null, null, null, null, null, null, null, null)
         );
-        assertEquals(4, violations.size());
+        assertEquals(5, violations.size());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class MovementTest extends ValidatorTest {
         Set<ConstraintViolation<Movement>> violations = validator.validate(
                 new Movement(null, null, null, null, null, new BigDecimal(0), null, null, null, null, null)
         );
-        assertEquals(4, violations.size());
+        assertEquals(5, violations.size());
     }
 
     @Test
@@ -61,15 +61,13 @@ public class MovementTest extends ValidatorTest {
         Movement m = new Movement(null, 1234, Type.FEE, Operation.EGRESS, currency, amount, null, null, null, null, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
         assertEquals(0, violations.size());
-        assertTrue(m.isValid());
     }
 
     @Test
     public void testIsValid_invalidFeeWithAccounts() {
         Movement m = new Movement(null, 1234, Type.FEE, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
-        assertFalse(m.isValid());
+        assertEquals(1, violations.size());
     }
 
     @Test
@@ -77,15 +75,13 @@ public class MovementTest extends ValidatorTest {
         Movement m = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
         assertEquals(0, violations.size());
-        assertTrue(m.isValid());
     }
 
     @Test
     public void testIsValid_sameAccounts() {
         Movement m = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account1, null, null, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
-        assertFalse(m.isValid());
+        assertEquals(1, violations.size());
     }
 
     @Test
@@ -93,7 +89,6 @@ public class MovementTest extends ValidatorTest {
         Movement m = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, walletTransactionId, paymentId, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
         assertEquals(0, violations.size());
-        assertTrue(m.isValid());
         assertTrue(m.isComplete());
     }
 
@@ -102,7 +97,6 @@ public class MovementTest extends ValidatorTest {
         Movement m = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
         assertEquals(0, violations.size());
-        assertTrue(m.isValid());
         assertFalse(m.isComplete());
     }
 }
