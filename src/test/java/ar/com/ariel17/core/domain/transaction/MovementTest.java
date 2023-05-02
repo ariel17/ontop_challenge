@@ -99,4 +99,16 @@ public class MovementTest extends ValidatorTest {
         assertEquals(0, violations.size());
         assertFalse(m.isComplete());
     }
+
+    @Test
+    public void testSetPaymentId_nonFee() {
+        Movement m = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
+        m.setPaymentId(paymentId);
+    }
+
+    @Test
+    public void testSetPaymentId_fee() {
+        Movement m = new Movement(null, 1234, Type.FEE, Operation.EGRESS, currency, amount, null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> m.setPaymentId(paymentId));
+    }
 }
