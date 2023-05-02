@@ -1,5 +1,6 @@
-package ar.com.ariel17.ontop.adapters.repositories;
+package ar.com.ariel17.ontop.adapters.repositories.jpa;
 
+import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
