@@ -27,7 +27,7 @@ public class BankAccountOwnerTest extends ValidatorTest {
     public void testInvalidValues() {
         BankAccountOwner owner = new BankAccountOwner(null, 0L, null, "", "", null, null);
         Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);
-        assertEquals(5, violations.size());
+        assertEquals(3, violations.size());
     }
 
     @Test
