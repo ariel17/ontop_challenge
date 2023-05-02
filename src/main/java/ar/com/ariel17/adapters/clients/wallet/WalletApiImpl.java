@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class WalletApiImpl implements WalletApi {
 
     @Override
-    public BigDecimal getBalance(Long userId) {
+    public BigDecimal getBalance(Long userId) throws WalletApiException {
         return null;
     }
 
