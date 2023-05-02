@@ -5,6 +5,7 @@ import ar.com.ariel17.core.domain.transaction.Movement;
 import ar.com.ariel17.core.domain.transaction.Operation;
 import ar.com.ariel17.core.domain.transaction.Transaction;
 import ar.com.ariel17.core.domain.transaction.Type;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
@@ -15,18 +16,10 @@ import java.util.Date;
  * Factory pattern for Transaction with handy builder methods associated to
  * operation.
  */
+@AllArgsConstructor
 public class TransactionFactory {
 
     private BigDecimal feePercent;
-
-    /**
-     * Creates a new factory instance.
-     *
-     * @param feePercent The amount of fee to apply on the operation, if required.
-     */
-    public TransactionFactory(@NonNull BigDecimal feePercent) {
-        this.feePercent = feePercent;
-    }
 
     /**
      * Creates an egress transaction, with fee.

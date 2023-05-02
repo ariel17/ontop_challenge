@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
     private MovementRepository movementRepository;
 
     @Override
-    public void transfer(@NonNull Long userId, BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
+    public void transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
 
         try {
             recipientRepository.save(recipient);
