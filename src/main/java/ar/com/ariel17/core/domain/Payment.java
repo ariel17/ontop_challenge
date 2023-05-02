@@ -3,6 +3,7 @@ package ar.com.ariel17.core.domain;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
@@ -29,4 +30,8 @@ public class Payment {
     private String error;
 
     private Date createdAt;
+
+    public boolean isError() {
+        return !StringUtils.isEmpty(error);
+    }
 }
