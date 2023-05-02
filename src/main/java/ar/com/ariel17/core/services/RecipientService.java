@@ -1,7 +1,6 @@
 package ar.com.ariel17.core.services;
 
 import ar.com.ariel17.core.domain.BankAccountOwner;
-import ar.com.ariel17.core.services.RecipientException;
 import org.springframework.stereotype.Service;
 
 /**

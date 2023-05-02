@@ -13,19 +13,19 @@ import java.util.Currency;
 @Configuration
 public class AppConfig {
 
-    @Value( "${on_top.routing}" )
+    @Value("${on_top.routing}")
     private Long onTopRoutingNumber;
 
-    @Value( "${on_top.account}" )
+    @Value("${on_top.account}")
     private Long onTopAccountNumber;
 
-    @Value( "${on_top.currency}" )
+    @Value("${on_top.currency}")
     private String currencyCode;
 
-    @Value( "${on_top.name}" )
+    @Value("${on_top.name}")
     private String onTopName;
 
-    @Value( "${transactions.fee_percent}" )
+    @Value("${transactions.fee_percent}")
     private String feePercent;
 
     @Bean

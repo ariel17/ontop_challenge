@@ -15,9 +15,8 @@ public class TypeAndAccountsValidator implements ConstraintValidator<TypeAndAcco
      * Validates if the type, from and to field values are valid for the
      * movement.
      *
-     * @param object object to validate
+     * @param object  object to validate
      * @param context context in which the constraint is evaluated
-     *
      * @return
      */
     public boolean isValid(Movement object, ConstraintValidatorContext context) {

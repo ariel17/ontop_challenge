@@ -10,6 +10,7 @@ requirements here](./docs/requirements.pdf).
 TODO
 
 ### With Compose
+
 TODO
 
 You can also build and run the application with Docker Compose as follows:

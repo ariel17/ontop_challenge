@@ -9,7 +9,7 @@ public enum Type {
 
     private final String type;
 
-    private Type(String type) {
+    Type(String type) {
         this.type = type;
     }
 

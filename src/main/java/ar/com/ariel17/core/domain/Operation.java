@@ -8,7 +8,7 @@ public enum Operation {
 
     private final String name;
 
-    private Operation(String name) {
+    Operation(String name) {
         this.name = name;
     }
 

@@ -1,10 +1,6 @@
 package ar.com.ariel17.core.services;
 
-import ar.com.ariel17.core.domain.BankAccountOwner;
-import ar.com.ariel17.core.domain.Movement;
-import ar.com.ariel17.core.domain.Operation;
-import ar.com.ariel17.core.domain.Transaction;
-import ar.com.ariel17.core.domain.Type;
+import ar.com.ariel17.core.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
@@ -25,8 +21,8 @@ public class TransactionFactory {
      * Creates an egress transaction, with fee.
      *
      * @param userId The user ID that created the transaction.
-     * @param from The bank account owner data from where take money to transfer.
-     * @param to The bank account owner data as target for the egress.
+     * @param from   The bank account owner data from where take money to transfer.
+     * @param to     The bank account owner data as target for the egress.
      * @param amount The amount of currency to egress.
      * @return The transaction with associated movements.
      */

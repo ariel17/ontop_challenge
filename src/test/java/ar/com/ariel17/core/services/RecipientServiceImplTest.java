@@ -4,8 +4,6 @@ import ar.com.ariel17.core.domain.BankAccount;
 import ar.com.ariel17.core.domain.BankAccountOwner;
 import ar.com.ariel17.core.repositories.RecipientRepository;
 import ar.com.ariel17.core.repositories.RecipientRepositoryException;
-import ar.com.ariel17.core.services.RecipientException;
-import ar.com.ariel17.core.services.RecipientServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

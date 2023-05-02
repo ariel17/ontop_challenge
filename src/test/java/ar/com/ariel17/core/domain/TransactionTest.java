@@ -1,6 +1,5 @@
 package ar.com.ariel17.core.domain;
 
-import ar.com.ariel17.core.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,7 +66,7 @@ public class TransactionTest extends ValidatorTest {
         t.addMovement(m1);
         t.addMovement(m2);
         t.setPaymentId(paymentId);
-        for (Movement m: t.getMovements()) {
+        for (Movement m : t.getMovements()) {
             if (m.getType() == Type.FEE) {
                 assertNull(m.getPaymentId());
             } else {
@@ -86,7 +85,7 @@ public class TransactionTest extends ValidatorTest {
         t.addMovement(m1);
         t.addMovement(m2);
         t.setWalletTransactionId(walletTransactionId);
-        for (Movement m: t.getMovements()) {
+        for (Movement m : t.getMovements()) {
             assertEquals(walletTransactionId, m.getWalletTransactionId());
         }
     }

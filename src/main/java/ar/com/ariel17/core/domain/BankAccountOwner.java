@@ -1,6 +1,5 @@
 package ar.com.ariel17.core.domain;
 
-import ar.com.ariel17.core.domain.BankAccount;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

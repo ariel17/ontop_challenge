@@ -3,8 +3,6 @@ package ar.com.ariel17.core.services;
 import ar.com.ariel17.core.domain.BankAccountOwner;
 import ar.com.ariel17.core.repositories.RecipientRepository;
 import ar.com.ariel17.core.repositories.RecipientRepositoryException;
-import ar.com.ariel17.core.services.RecipientException;
-import ar.com.ariel17.core.services.RecipientService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;

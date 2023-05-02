@@ -1,7 +1,7 @@
 package ar.com.ariel17.core.clients;
 
-import ar.com.ariel17.core.domain.Payment;
 import ar.com.ariel17.core.domain.BankAccountOwner;
+import ar.com.ariel17.core.domain.Payment;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

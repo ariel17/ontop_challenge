@@ -95,7 +95,7 @@ public class TransactionServiceImplTest {
 
         verify(lockRepository, times(1)).close();
 
-        for (Movement m: transaction.getMovements()) {
+        for (Movement m : transaction.getMovements()) {
             assertEquals(m.getWalletTransactionId(), walletTransactionId);
             if (m.getType() == Type.FEE) {
                 assertNull(m.getPaymentId());

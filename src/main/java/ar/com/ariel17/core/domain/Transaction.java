@@ -36,7 +36,7 @@ public class Transaction {
      */
     public BigDecimal total() {
         BigDecimal total = new BigDecimal(0);
-        for (Movement movement: movements) {
+        for (Movement movement : movements) {
             total = total.add(movement.getAmount());
         }
         return total;
@@ -44,10 +44,11 @@ public class Transaction {
 
     /**
      * Updates non-fee movements with associated payment ID.
+     *
      * @param paymentId The payment operation ID.
      */
     public void setPaymentId(@NonNull UUID paymentId) {
-        for (Movement movement: movements) {
+        for (Movement movement : movements) {
             if (movement.getType() != Type.FEE) {
                 movement.setPaymentId(paymentId);
             }
@@ -55,7 +56,7 @@ public class Transaction {
     }
 
     public void setWalletTransactionId(@NonNull Long walletTransactionId) {
-        for (Movement movement: movements) {
+        for (Movement movement : movements) {
             movement.setWalletTransactionId(walletTransactionId);
         }
     }

@@ -1,6 +1,5 @@
 package ar.com.ariel17.core.domain;
 
-import ar.com.ariel17.core.domain.*;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
