@@ -19,7 +19,7 @@ public class TransactionTest extends ValidatorTest {
 
     private Movement m2;
 
-    private Integer walletTransactionId;
+    private Long walletTransactionId;
 
     private UUID paymentId;
 
@@ -30,13 +30,13 @@ public class TransactionTest extends ValidatorTest {
         super.setUp();
         Currency currency = Currency.getInstance("USD");
         BigDecimal amount = new BigDecimal(1234);
-        BankAccount account1 = new BankAccount(1234, 1234, currency);
-        BankAccount account2 = new BankAccount(4321, 4321, currency);
+        BankAccount account1 = new BankAccount(1234L, 1234L, currency);
+        BankAccount account2 = new BankAccount(4321L, 4321L, currency);
 
-        m1 = new Movement(null, 1234, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
-        m2 = new Movement(null, 1234, Type.FEE, Operation.EGRESS, currency, amount, null, null, null, null, null);
+        m1 = new Movement(null, 4321L, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
+        m2 = new Movement(null, 4321L, Type.FEE, Operation.EGRESS, currency, amount, null, null, null, null, null);
 
-        walletTransactionId = 1234;
+        walletTransactionId = 1234L;
         paymentId = UUID.randomUUID();
 
         t = new Transaction();

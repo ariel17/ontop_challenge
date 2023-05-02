@@ -1,9 +1,9 @@
 package ar.com.ariel17.core.services.transaction;
 
-import ar.com.ariel17.core.clients.payment.PaymentProviderAPI;
-import ar.com.ariel17.core.clients.payment.PaymentProviderAPIException;
-import ar.com.ariel17.core.clients.wallet.WalletAPI;
-import ar.com.ariel17.core.clients.wallet.WalletAPIException;
+import ar.com.ariel17.core.clients.payment.PaymentProviderApi;
+import ar.com.ariel17.core.clients.payment.PaymentProviderApiException;
+import ar.com.ariel17.core.clients.wallet.WalletApi;
+import ar.com.ariel17.core.clients.wallet.WalletApiException;
 import ar.com.ariel17.core.domain.Payment;
 import ar.com.ariel17.core.domain.bank.BankAccountOwner;
 import ar.com.ariel17.core.domain.transaction.Transaction;
@@ -13,7 +13,7 @@ import ar.com.ariel17.core.repositories.payment.PaymentRepository;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepository;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepositoryException;
 import ar.com.ariel17.core.services.lock.LockService;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.math.BigDecimal;
 
@@ -29,15 +29,24 @@ public class TransactionServiceImpl implements TransactionService {
 
     private LockService lockService;
 
-    private WalletAPI walletAPI;
+    private WalletApi walletAPI;
 
-    private PaymentProviderAPI paymentProviderAPI;
+    private PaymentProviderApi paymentProviderAPI;
 
     private PaymentRepository paymentRepository;
 
     private MovementRepository movementRepository;
 
-    public TransactionServiceImpl(@NotNull final RecipientRepository recipientRepository, @NotNull final BankAccountOwner sourceOwner, @NotNull final TransactionFactory transactionFactory, @NotNull final LockService lockService, @NotNull final WalletAPI walletAPI, @NotNull final PaymentProviderAPI paymentProviderAPI, @NotNull final PaymentRepository paymentRepository, @NotNull final MovementRepository movementRepository) {
+    public TransactionServiceImpl(
+            @NonNull RecipientRepository recipientRepository,
+            @NonNull BankAccountOwner sourceOwner,
+            @NonNull TransactionFactory transactionFactory,
+            @NonNull LockService lockService,
+            @NonNull WalletApi walletAPI,
+            @NonNull PaymentProviderApi paymentProviderAPI,
+            @NonNull PaymentRepository paymentRepository,
+            @NonNull MovementRepository movementRepository
+    ) {
         this.recipientRepository = recipientRepository;
         this.sourceOwner = sourceOwner;
         this.transactionFactory = transactionFactory;
@@ -49,7 +58,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void transfer(@NotNull Integer userId, @NotNull BankAccountOwner recipient, @NotNull BigDecimal amount) throws TransactionException {
+    public void transfer(@NonNull Long userId, BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
+
         try {
             recipientRepository.save(recipient);
         } catch (RecipientRepositoryException e) {
@@ -58,7 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction transaction = transactionFactory.createEgress(userId, sourceOwner, recipient, amount);
         BigDecimal total = transaction.total();
-        Integer walletTransferId = null;
+        Long walletTransferId = null;
 
         try (LockRepository lockRepository = lockService.createLockForUserId(userId)) {
             boolean acquired = lockRepository.acquire();
@@ -80,11 +90,11 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setPaymentId(payment.getId());
             movementRepository.save(transaction.getMovements());
 
-        } catch (PaymentProviderAPIException e) {
-            Integer transactionId;
+        } catch (PaymentProviderApiException e) {
+            Long transactionId;
             try {
                 transactionId = walletAPI.createTransaction(userId, total);
-            } catch (WalletAPIException ex) {
+            } catch (WalletApiException ex) {
                 throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", walletTransferId), e);
             }
 

@@ -23,6 +23,6 @@ public class PaymentTest extends ValidatorTest {
         Set<ConstraintViolation<Payment>> violations = validator.validate(
                 new Payment(null, null, null, null, null)
         );
-        assertEquals(2, violations.size());
+        assertEquals(3, violations.size());
     }
 }

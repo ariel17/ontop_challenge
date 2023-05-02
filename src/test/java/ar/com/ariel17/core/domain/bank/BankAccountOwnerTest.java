@@ -20,19 +20,19 @@ public class BankAccountOwnerTest extends ValidatorTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        account = new BankAccount(1234, 1234, Currency.getInstance("USD"));
+        account = new BankAccount(1234L, 1234L, Currency.getInstance("USD"));
     }
 
     @Test
     public void testInvalidValues() {
-        BankAccountOwner owner = new BankAccountOwner(null, 0, null, "", "", null, null);
+        BankAccountOwner owner = new BankAccountOwner(null, 0L, null, "", "", null, null);
         Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);
         assertEquals(5, violations.size());
     }
 
     @Test
     public void testGetName_withLastName() {
-        BankAccountOwner owner = new BankAccountOwner(null, 1234, account, "1234", "John", "Doe", null);
+        BankAccountOwner owner = new BankAccountOwner(null, 1234L, account, "1234", "John", "Doe", null);
         Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);
         assertEquals(0, violations.size());
         assertEquals("John Doe", owner.getName());
@@ -40,7 +40,7 @@ public class BankAccountOwnerTest extends ValidatorTest {
 
     @Test
     public void testGetName_withoutLastName() {
-        BankAccountOwner owner = new BankAccountOwner(null, 1234, account, "1234", "John", "", null);
+        BankAccountOwner owner = new BankAccountOwner(null, 1234L, account, "1234", "John", "", null);
         Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);
         assertEquals(0, violations.size());
         assertEquals("John", owner.getName());

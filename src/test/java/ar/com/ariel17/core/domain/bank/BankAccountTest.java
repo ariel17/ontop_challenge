@@ -22,7 +22,7 @@ public class BankAccountTest extends ValidatorTest {
     @Test
     public void testInvalidValues() {
         Set<ConstraintViolation<BankAccount>> violations = validator.validate(
-                new BankAccount(0, 0, null)
+                new BankAccount(0L, 0L, null)
         );
         assertEquals(3, violations.size());
     }
