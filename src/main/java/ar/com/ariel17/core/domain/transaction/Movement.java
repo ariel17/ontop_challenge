@@ -5,6 +5,7 @@ import ar.com.ariel17.core.domain.Validable;
 import ar.com.ariel17.core.domain.bank.BankAccount;
 import ar.com.ariel17.core.domain.validators.NonZeroBigDecimal;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * Movement represents a money displace. Relates the wallet user with a bank
  * account transaction.
  */
+@Validated
 public class Movement extends BaseModel<Integer> implements Validable {
 
     private Integer userId;
