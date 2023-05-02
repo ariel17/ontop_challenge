@@ -1,4 +1,4 @@
-package ar.com.ariel17.app.core.domain;
+package ar.com.ariel17.core.domain;
 
 
 import jakarta.validation.Validation;

@@ -1,4 +1,4 @@
-package ar.com.ariel17.app;
+package ar.com.ariel17;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

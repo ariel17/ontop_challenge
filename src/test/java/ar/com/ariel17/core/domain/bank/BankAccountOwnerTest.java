@@ -1,8 +1,6 @@
-package ar.com.ariel17.app.core.domain.bank;
+package ar.com.ariel17.core.domain.bank;
 
-import ar.com.ariel17.app.core.domain.ValidatorTest;
-import ar.com.ariel17.core.domain.bank.BankAccount;
-import ar.com.ariel17.core.domain.bank.BankAccountOwner;
+import ar.com.ariel17.core.domain.ValidatorTest;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

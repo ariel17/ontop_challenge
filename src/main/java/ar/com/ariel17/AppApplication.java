@@ -1,4 +1,4 @@
-package ar.com.ariel17.app;
+package ar.com.ariel17;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
