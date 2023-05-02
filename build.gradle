@@ -17,6 +17,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.0.6'
+    implementation 'org.springframework.integration:spring-integration-redis:6.0.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'junit:junit:4.13.1'
 
@@ -34,6 +35,12 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     testImplementation "org.mockito:mockito-core:3.+"
+
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-integration', version: '3.0.6'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.0.6'
+    implementation group: 'io.lettuce', name: 'lettuce-core', version: '6.2.4.RELEASE'
+    runtimeOnly group: 'org.springframework.integration', name: 'spring-integration-redis', version: '6.0.5'
+
 }
 
 tasks.named('test') {
