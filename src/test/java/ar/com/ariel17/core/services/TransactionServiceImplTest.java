@@ -4,22 +4,8 @@ import ar.com.ariel17.core.clients.PaymentProviderApi;
 import ar.com.ariel17.core.clients.PaymentProviderApiException;
 import ar.com.ariel17.core.clients.WalletApi;
 import ar.com.ariel17.core.clients.WalletApiException;
-import ar.com.ariel17.core.domain.Payment;
-import ar.com.ariel17.core.domain.BankAccount;
-import ar.com.ariel17.core.domain.BankAccountOwner;
-import ar.com.ariel17.core.domain.Movement;
-import ar.com.ariel17.core.domain.Transaction;
-import ar.com.ariel17.core.domain.Type;
-import ar.com.ariel17.core.repositories.LockRepository;
-import ar.com.ariel17.core.repositories.MovementRepository;
-import ar.com.ariel17.core.repositories.MovementRepositoryException;
-import ar.com.ariel17.core.repositories.PaymentRepository;
-import ar.com.ariel17.core.repositories.RecipientRepository;
-import ar.com.ariel17.core.repositories.RecipientRepositoryException;
-import ar.com.ariel17.core.services.LockService;
-import ar.com.ariel17.core.services.TransactionException;
-import ar.com.ariel17.core.services.TransactionFactory;
-import ar.com.ariel17.core.services.TransactionServiceImpl;
+import ar.com.ariel17.core.domain.*;
+import ar.com.ariel17.core.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -183,6 +169,28 @@ public class TransactionServiceImplTest {
         when(walletAPI.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         doThrow(new PaymentProviderApiException("mocked error")).when(paymentProviderAPI).createPayment(eq(sourceOwner), eq(recipient), eq(amount));
+        assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
+
+        verify(walletAPI, times(1)).createTransaction(eq(userId), eq(total));
+        verify(walletAPI, times(1)).createTransaction(eq(userId), eq(total.negate()));
+
+        verify(lockRepository, times(1)).close();
+    }
+
+    @Test
+    public void testTransfer_paymentProviderResponseIsError() throws Exception {
+        when(lockService.createLockForUserId(eq(userId))).thenReturn(lockRepository);
+        when(lockRepository.acquire()).thenReturn(true);
+        when(walletAPI.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
+
+        BigDecimal total = BigDecimal.valueOf(-1100.0);
+        Long walletTransactionId = 555L;
+        when(walletAPI.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
+
+        UUID paymentId = UUID.randomUUID();
+        Payment response = new Payment(paymentId, new BigDecimal(3999), "error", "error", null);
+        when(paymentProviderAPI.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
+
         assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
 
         verify(walletAPI, times(1)).createTransaction(eq(userId), eq(total));

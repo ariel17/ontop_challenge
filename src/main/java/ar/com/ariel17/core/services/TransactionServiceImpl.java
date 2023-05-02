@@ -51,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction transaction = transactionFactory.createEgress(userId, sourceOwner, recipient, amount);
         BigDecimal total = transaction.total();
-        Long walletTransferId = null;
+        Long walletTransactionId = null;
 
         try (LockRepository lockRepository = lockService.createLockForUserId(userId)) {
             boolean acquired = lockRepository.acquire();
@@ -64,30 +64,45 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new TransactionException("Balance is insufficient to complete transaction");
             }
 
-            walletTransferId = walletAPI.createTransaction(userId, total.negate());
-            transaction.setWalletTransactionId(walletTransferId);
+            walletTransactionId = walletAPI.createTransaction(userId, total.negate());
+            transaction.setWalletTransactionId(walletTransactionId);
 
-            Payment payment = paymentProviderAPI.createPayment(sourceOwner, recipient, amount);
-            paymentRepository.save(payment);
+            Payment payment = null;
+            try {
+                payment = paymentProviderAPI.createPayment(sourceOwner, recipient, amount);
+                if (payment.isError()) {
+                    rollbackWalletTransaction(userId, total, walletTransactionId);
+                    throw new TransactionException("Payment provider response is error");
+                }
+            } finally {
+                paymentRepository.save(payment);
+            }
 
             transaction.setPaymentId(payment.getId());
             transaction = movementRepository.save(transaction);
 
         } catch (PaymentProviderApiException e) {
-            Long transactionId;
-            try {
-                transactionId = walletAPI.createTransaction(userId, total);
-            } catch (WalletApiException ex) {
-                throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", walletTransferId), e);
-            }
-
-            // TODO log transaction id
+            rollbackWalletTransaction(userId, total, walletTransactionId);
             throw new TransactionException(e);
+
+        } catch (TransactionException e) {
+            throw e;
 
         } catch (Exception e) {
             throw new TransactionException(e);
         }
 
         return transaction;
+    }
+
+    private void rollbackWalletTransaction(Long userId, BigDecimal total, Long originalWalletTransferId) throws TransactionException {
+        Long transactionId;
+        try {
+            transactionId = walletAPI.createTransaction(userId, total);
+        } catch (WalletApiException e) {
+            throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", originalWalletTransferId), e);
+        }
+
+        // TODO log transaction id
     }
 }
