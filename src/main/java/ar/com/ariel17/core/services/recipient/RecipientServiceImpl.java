@@ -3,18 +3,22 @@ package ar.com.ariel17.core.services.recipient;
 import ar.com.ariel17.core.domain.bank.BankAccountOwner;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepository;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepositoryException;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RecipientServiceImpl implements RecipientService {
 
-    private final RecipientRepository repository;
+    @Autowired
+    private RecipientRepository repository;
 
-    public RecipientServiceImpl(@NotNull final RecipientRepository repository) {
+    public RecipientServiceImpl(RecipientRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public void createRecipient(@NotNull BankAccountOwner recipient) throws RecipientException {
+    public void createRecipient(@NonNull BankAccountOwner recipient) throws RecipientException{
         try {
             repository.save(recipient);
         } catch (RecipientRepositoryException e) {
