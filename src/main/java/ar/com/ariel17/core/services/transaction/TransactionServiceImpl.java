@@ -13,10 +13,14 @@ import ar.com.ariel17.core.repositories.payment.PaymentRepository;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepository;
 import ar.com.ariel17.core.repositories.recipient.RecipientRepositoryException;
 import ar.com.ariel17.core.services.lock.LockService;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
+@AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private static final int INSUFFICIENT_BALANCE = -1;
@@ -36,26 +40,6 @@ public class TransactionServiceImpl implements TransactionService {
     private PaymentRepository paymentRepository;
 
     private MovementRepository movementRepository;
-
-    public TransactionServiceImpl(
-            @NonNull RecipientRepository recipientRepository,
-            @NonNull BankAccountOwner sourceOwner,
-            @NonNull TransactionFactory transactionFactory,
-            @NonNull LockService lockService,
-            @NonNull WalletApi walletAPI,
-            @NonNull PaymentProviderApi paymentProviderAPI,
-            @NonNull PaymentRepository paymentRepository,
-            @NonNull MovementRepository movementRepository
-    ) {
-        this.recipientRepository = recipientRepository;
-        this.sourceOwner = sourceOwner;
-        this.transactionFactory = transactionFactory;
-        this.lockService = lockService;
-        this.walletAPI = walletAPI;
-        this.paymentProviderAPI = paymentProviderAPI;
-        this.paymentRepository = paymentRepository;
-        this.movementRepository = movementRepository;
-    }
 
     @Override
     public void transfer(@NonNull Long userId, BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {

@@ -1,12 +1,14 @@
 package ar.com.ariel17.core.services.transaction;
 
 import ar.com.ariel17.core.domain.bank.BankAccountOwner;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 /**
  * Defines the contract to manage transactions.
  */
+@Service
 public interface TransactionService {
 
     /**
