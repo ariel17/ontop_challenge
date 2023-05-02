@@ -1,6 +1,8 @@
 package ar.com.ariel17.ontop.core.domain;
 
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,16 +12,14 @@ import java.util.UUID;
 /**
  * Transaction represents a group of movements related to the same operation.
  */
+@Getter
+@Setter
 public class Transaction {
 
-    private final List<Movement> movements;
+    private List<Movement> movements;
 
     public Transaction() {
         movements = new ArrayList<>();
-    }
-
-    public List<Movement> getMovements() {
-        return movements;
     }
 
     /**
