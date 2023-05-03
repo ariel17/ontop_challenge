@@ -6,12 +6,14 @@ import ar.com.ariel17.ontop.adapters.repositories.jpa.JpaMovementRepository;
 import ar.com.ariel17.ontop.core.domain.Movement;
 import ar.com.ariel17.ontop.core.domain.Transaction;
 import ar.com.ariel17.ontop.core.repositories.MovementRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@AllArgsConstructor
 public class MovementRepositoryImpl implements MovementRepository {
 
     @Autowired
