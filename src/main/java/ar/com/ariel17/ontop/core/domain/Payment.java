@@ -32,4 +32,12 @@ public class Payment {
     public boolean isError() {
         return !StringUtils.isEmpty(error);
     }
+
+    public boolean isTimeout() {
+        return StringUtils.contains(error, "timeout");
+    }
+
+    public boolean isRejection() {
+        return StringUtils.contains(error, "rejected");
+    }
 }

@@ -1,8 +1,8 @@
 package ar.com.ariel17.ontop.core.services;
 
-import ar.com.ariel17.ontop.core.clients.PaymentProviderApi;
+import ar.com.ariel17.ontop.core.clients.PaymentProviderApiClient;
 import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
-import ar.com.ariel17.ontop.core.clients.WalletApi;
+import ar.com.ariel17.ontop.core.clients.WalletApiClient;
 import ar.com.ariel17.ontop.core.clients.WalletApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Payment;
@@ -34,9 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionFactory transactionFactory;
 
-    private WalletApi walletAPI;
+    private WalletApiClient walletAPIClient;
 
-    private PaymentProviderApi paymentProviderAPI;
+    private PaymentProviderApiClient paymentProviderAPIClient;
 
     private PaymentRepository paymentRepository;
 
@@ -60,17 +60,18 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new TransactionException(String.format("Lock for user %d could not be acquired", userId));
             }
 
-            if (walletAPI.getBalance(userId).compareTo(total) == INSUFFICIENT_BALANCE) {
+            if (walletAPIClient.getBalance(userId).compareTo(total) == INSUFFICIENT_BALANCE) {
                 throw new TransactionException("Balance is insufficient to complete transaction");
             }
 
-            walletTransactionId = walletAPI.createTransaction(userId, total.negate());
+            walletTransactionId = walletAPIClient.createTransaction(userId, total.negate());
             transaction.setWalletTransactionId(walletTransactionId);
 
             Payment payment = null;
             try {
-                payment = paymentProviderAPI.createPayment(sourceOwner, recipient, amount);
+                payment = paymentProviderAPIClient.createPayment(sourceOwner, recipient, amount);
                 if (payment.isError()) {
+                    // TODO fix this. The transaction needs to complete and add restoring movements
                     rollbackWalletTransaction(userId, total, walletTransactionId);
                     throw new TransactionException("Payment provider response is error");
                 }
@@ -98,7 +99,7 @@ public class TransactionServiceImpl implements TransactionService {
     private void rollbackWalletTransaction(Long userId, BigDecimal total, Long originalWalletTransferId) throws TransactionException {
         Long transactionId;
         try {
-            transactionId = walletAPI.createTransaction(userId, total);
+            transactionId = walletAPIClient.createTransaction(userId, total);
         } catch (WalletApiException e) {
             throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", originalWalletTransferId), e);
         }

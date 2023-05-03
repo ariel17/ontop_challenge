@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public interface PaymentProviderApi {
+public interface PaymentProviderApiClient {
 
     Payment createPayment(BankAccountOwner from, BankAccountOwner to, BigDecimal amount) throws PaymentProviderApiException;
 }
