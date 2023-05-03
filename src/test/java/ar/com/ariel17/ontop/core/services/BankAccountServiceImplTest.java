@@ -38,13 +38,13 @@ public class BankAccountServiceImplTest {
     }
 
     @Test
-    public void testCreateRecipient_ok() throws BankAccountException {
+    public void testCreateRecipient_ok() {
         service.create(owner);
         verify(repository, times(1)).save(eq(owner));
     }
 
     @Test
-    public void testGetById_present() throws BankAccountException {
+    public void testGetById_present() {
         when(repository.getById(eq(ownerId))).thenReturn(Optional.of(owner));
         var o = service.getById(ownerId);
         assertTrue(o.isPresent());
@@ -52,7 +52,7 @@ public class BankAccountServiceImplTest {
     }
 
     @Test
-    public void testGetById_notPresent() throws BankAccountException {
+    public void testGetById_notPresent() {
         when(repository.getById(eq(ownerId))).thenReturn(Optional.empty());
         var o = service.getById(ownerId);
         assertTrue(o.isEmpty());
