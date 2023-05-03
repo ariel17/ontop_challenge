@@ -7,6 +7,8 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class BankAccountServiceImpl implements BankAccountService {
@@ -17,5 +19,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public void create(@NonNull BankAccountOwner account) {
         repository.save(account);
+    }
+
+    @Override
+    public Optional<BankAccountOwner> getById(Long id) {
+        return repository.getById(id);
     }
 }

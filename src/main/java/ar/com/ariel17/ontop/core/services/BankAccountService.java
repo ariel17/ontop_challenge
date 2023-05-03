@@ -3,6 +3,8 @@ package ar.com.ariel17.ontop.core.services;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * BankAccountService provides the contract for implementators on bank account
  * management.
@@ -16,4 +18,6 @@ public interface BankAccountService {
      * @param account The recipient to create.
      */
     void create(BankAccountOwner account);
+
+    Optional<BankAccountOwner> getById(Long id);
 }
