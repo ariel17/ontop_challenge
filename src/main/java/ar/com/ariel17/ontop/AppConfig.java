@@ -37,7 +37,7 @@ public class AppConfig implements ApplicationContextAware {
     private Long onTopAccountNumber;
 
     @Value("${on_top.currency}")
-    private String currencyCode;
+    private String onTopCurrencyCode;
 
     @Value("${on_top.name}")
     private String onTopName;
@@ -72,9 +72,24 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
+    public Currency defaultCurrency() {
+        return Currency.getInstance(onTopCurrencyCode);
+    }
+
+    @Bean
     public BankAccountOwner onTopBankAccount() {
-        BankAccount account = new BankAccount(onTopRoutingNumber, onTopAccountNumber, Currency.getInstance(currencyCode));
-        return new BankAccountOwner(null, 0L, account, "", onTopName, "", null);
+        BankAccount account = BankAccount.builder().
+                routing(onTopRoutingNumber).
+                account(onTopAccountNumber).
+                currency(Currency.getInstance(onTopCurrencyCode)).
+                build();
+
+        return BankAccountOwner.builder().
+                bankAccount(account).
+                idNumber("").
+                firstName(onTopName).
+                lastName("").
+                build();
     }
 
     @Bean
