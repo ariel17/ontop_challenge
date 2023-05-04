@@ -1,22 +1,21 @@
 package ar.com.ariel17.ontop.core.domain;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Transaction represents a group of movements related to the same operation.
  */
-@Getter
-@Setter
+@Data
 public class Transaction {
 
     private List<Movement> movements;
+
+    private Payment payment;
 
     public Transaction() {
         movements = new ArrayList<>();
@@ -40,11 +39,12 @@ public class Transaction {
     /**
      * Updates non-fee movements with associated payment ID.
      *
-     * @param paymentId The payment operation ID.
+     * @param payment The payment operation response.
      */
-    public void setPaymentId(@NonNull UUID paymentId) {
+    public void setPayment(Payment payment) {
+        this.payment = payment;
         movements.stream().filter(m -> m.getType() != Type.FEE).
-                forEach(m -> m.setPaymentId(paymentId));
+                forEach(m -> m.setPaymentId(payment.getId()));
     }
 
     public void setWalletTransactionId(@NonNull Long walletTransactionId) {
