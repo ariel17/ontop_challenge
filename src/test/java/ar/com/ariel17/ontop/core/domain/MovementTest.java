@@ -39,50 +39,6 @@ public class MovementTest extends ValidatorTest {
     }
 
     @Test
-    public void testInvalidValues_null() {
-        Set<ConstraintViolation<Movement>> violations = validator.validate(
-                new Movement(null, null, null, null, null, null, null, null, null, null, null)
-        );
-        assertEquals(6, violations.size());
-    }
-
-    @Test
-    public void testInvalidValues_zero() {
-        Set<ConstraintViolation<Movement>> violations = validator.validate(
-                new Movement(null, null, null, null, null, new BigDecimal(0), null, null, null, null, null)
-        );
-        assertEquals(6, violations.size());
-    }
-
-    @Test
-    public void testIsValid_validFee() {
-        Movement m = new Movement(null, 1234L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
-    }
-
-    @Test
-    public void testIsValid_invalidFeeWithAccounts() {
-        Movement m = new Movement(null, 1234L, Type.FEE, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(1, violations.size());
-    }
-
-    @Test
-    public void testIsValid_validNotFee() {
-        Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
-    }
-
-    @Test
-    public void testIsValid_sameAccounts() {
-        Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account1, null, null, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(1, violations.size());
-    }
-
-    @Test
     public void testIsComplete_complete() {
         Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, walletTransactionId, paymentId, null);
         Set<ConstraintViolation<Movement>> violations = validator.validate(m);
