@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Factory pattern for Transaction with handy builder methods associated to
@@ -18,15 +20,15 @@ public class TransactionFactory {
     private BigDecimal feePercent;
 
     /**
-     * Creates an egress transaction, with fee.
+     * Creates a withdrawal transaction, with fee.
      *
      * @param userId The user ID that created the transaction.
      * @param from   The bank account owner data from where take money to transfer.
-     * @param to     The bank account owner data as target for the egress.
-     * @param amount The amount of currency to egress.
+     * @param to     The bank account owner data as target for withdrawal.
+     * @param amount The amount of currency to withdraw.
      * @return The transaction with associated movements.
      */
-    public Transaction createEgress(@NonNull Long userId, @NonNull BankAccountOwner from, @NonNull BankAccountOwner to, @NonNull BigDecimal amount) throws TransactionException {
+    public Transaction createWithdraw(@NonNull Long userId, @NonNull BankAccountOwner from, @NonNull BankAccountOwner to, @NonNull BigDecimal amount) throws TransactionException {
         Currency currency = from.getBankAccount().getCurrency();
 
         if (!currency.equals(to.getBankAccount().getCurrency())) {
@@ -36,13 +38,44 @@ public class TransactionFactory {
         Transaction transaction = new Transaction();
         Date now = new Date();
 
-        Movement m = new Movement(null, userId, Type.TRANSFER, Operation.EGRESS, currency, amount, from.getBankAccount(), to.getBankAccount(), null, null, now);
-        transaction.addMovement(m);
+        transaction.addMovement(Movement.builder().
+                userId(userId).
+                type(Type.TRANSFER).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount).
+                from(from.getBankAccount()).
+                to(to.getBankAccount()).
+                createdAt(now).
+                build());
 
-        BigDecimal fee = amount.multiply(feePercent);
-        m = new Movement(null, userId, Type.FEE, Operation.EGRESS, currency, fee, null, null, null, null, now);
-        transaction.addMovement(m);
+        transaction.addMovement(Movement.builder().
+                userId(userId).
+                type(Type.FEE).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount.multiply(feePercent)).
+                createdAt(now).
+                build());
 
         return transaction;
+    }
+
+    public void revertOperation(Transaction transaction, Operation operation, Long reverWalletTransactionId) {
+        Date now = new Date();
+        List<Movement> newMovements = new ArrayList<>();
+        transaction.getMovements().stream().filter(m -> m.getOperation() == operation).forEach(m -> {
+            newMovements.add(Movement.builder().
+                    type(m.getType()).
+                    operation(Operation.REVERT).
+                    currency(m.getCurrency()).
+                    amount(m.getAmount().negate()).
+                    walletTransactionId(reverWalletTransactionId).
+                    createdAt(now).
+                    build());
+        });
+        List<Movement> movements = transaction.getMovements();
+        movements.addAll(newMovements);
+        transaction.setMovements(movements);
     }
 }
