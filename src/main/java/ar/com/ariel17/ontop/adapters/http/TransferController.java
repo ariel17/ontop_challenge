@@ -33,6 +33,10 @@ public class TransferController {
 
     @PostMapping("/transfer")
     public TransferResponse createTransfer(@Valid @RequestBody TransferRequest request) {
+        if (request.getRecipientId() != null && request.getRecipient() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Use recipient_id or recipient, not both");
+        }
+
         BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(request);
         Transaction transaction = null;
         try {
@@ -41,7 +45,7 @@ public class TransferController {
         } catch (UserNotFoundException | BankAccountOwnerNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString(), e);
 
-        } catch (TransactionException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString(), e);
         }
         return mapper.transactionToTransferResponse(request.getUserId(), transaction);
