@@ -2,6 +2,7 @@ package ar.com.ariel17.ontop.adapters.http.entities.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class TransferRecipient {
 
+    @Valid
     @NotNull(message = "Account cannot be null")
     private TransferAccount account;
 
