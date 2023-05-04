@@ -2,6 +2,7 @@ package ar.com.ariel17.ontop.core.domain;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Payment contains the external provider's operation result.
  */
 @AllArgsConstructor
+@Builder
 @Data
 public class Payment {
 
