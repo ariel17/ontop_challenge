@@ -33,11 +33,8 @@ public class Transaction {
      * @return The sum of all movements amount.
      */
     public BigDecimal total() {
-        BigDecimal total = new BigDecimal(0);
-        for (Movement movement : movements) {
-            total = total.add(movement.getAmount());
-        }
-        return total;
+        return movements.stream().map(m -> m.getAmount()).
+                reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /**
@@ -46,16 +43,11 @@ public class Transaction {
      * @param paymentId The payment operation ID.
      */
     public void setPaymentId(@NonNull UUID paymentId) {
-        for (Movement movement : movements) {
-            if (movement.getType() != Type.FEE) {
-                movement.setPaymentId(paymentId);
-            }
-        }
+        movements.stream().filter(m -> m.getType() != Type.FEE).
+                forEach(m -> m.setPaymentId(paymentId));
     }
 
     public void setWalletTransactionId(@NonNull Long walletTransactionId) {
-        for (Movement movement : movements) {
-            movement.setWalletTransactionId(walletTransactionId);
-        }
+        movements.stream().forEach(m -> m.setWalletTransactionId(walletTransactionId));
     }
 }
