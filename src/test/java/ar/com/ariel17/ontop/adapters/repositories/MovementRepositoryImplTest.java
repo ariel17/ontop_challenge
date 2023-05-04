@@ -35,7 +35,7 @@ public class MovementRepositoryImplTest {
         BigDecimal amount = new BigDecimal("1000");
         BankAccount from = new BankAccount(1234L, 1234L, currency);
         BankAccount to = new BankAccount(4321L, 4321L, currency);
-        movement = new Movement(null, 1234L, Type.TRANSFER, Operation.EGRESS, currency, amount, from, to, 500L, UUID.randomUUID(), null);
+        movement = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, from, to, 500L, UUID.randomUUID(), null);
 
         transaction = new Transaction();
         transaction.addMovement(movement);

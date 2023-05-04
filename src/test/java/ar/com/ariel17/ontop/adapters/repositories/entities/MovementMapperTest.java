@@ -22,7 +22,7 @@ public class MovementMapperTest {
     public void setUp() {
         BankAccount from = new BankAccount(1111L, 1111L, Currency.getInstance("USD"));
         BankAccount to = new BankAccount(2222L, 2222L, Currency.getInstance("USD"));
-        movement = new Movement(10L, 99L, Type.TRANSFER, Operation.EGRESS, Currency.getInstance("USD"), new BigDecimal("-100.01"), from, to, 5000L, UUID.randomUUID(), new Date());
+        movement = new Movement(10L, 99L, Type.TRANSFER, Operation.WITHDRAW, Currency.getInstance("USD"), new BigDecimal("-100.01"), from, to, 5000L, UUID.randomUUID(), new Date());
     }
 
     @Test

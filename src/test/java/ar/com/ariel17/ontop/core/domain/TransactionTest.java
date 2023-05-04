@@ -31,8 +31,8 @@ public class TransactionTest extends ValidatorTest {
         BankAccount account1 = new BankAccount(1234L, 1234L, currency);
         BankAccount account2 = new BankAccount(4321L, 4321L, currency);
 
-        m1 = new Movement(null, 4321L, Type.TRANSFER, Operation.EGRESS, currency, amount, account1, account2, null, null, null);
-        m2 = new Movement(null, 4321L, Type.FEE, Operation.EGRESS, currency, amount, null, null, null, null, null);
+        m1 = new Movement(null, 4321L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
+        m2 = new Movement(null, 4321L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);
 
         walletTransactionId = 1234L;
         paymentId = UUID.randomUUID();
