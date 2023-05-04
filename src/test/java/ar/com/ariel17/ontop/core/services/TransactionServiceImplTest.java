@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -165,13 +166,20 @@ public class TransactionServiceImplTest {
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
+        when(movementRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArguments()[0]);
 
         BigDecimal total = BigDecimal.valueOf(-1100.0);
         Long walletTransactionId = 555L;
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         doThrow(new PaymentProviderApiException("mocked error")).when(paymentProviderAPIClient).createPayment(eq(sourceOwner), eq(recipient), eq(amount));
-        assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
+        Transaction transaction = service.transfer(userId, recipient, amount);
+
+        assertEquals(4, transaction.getMovements().size());
+        assertEquals(new BigDecimal("0.0"), transaction.total());
+
+        validateRevertedMovements(Type.FEE, transaction);
+        validateRevertedMovements(Type.TRANSFER, transaction);
 
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total));
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total.negate()));
@@ -184,6 +192,7 @@ public class TransactionServiceImplTest {
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
+        when(movementRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArguments()[0]);
 
         BigDecimal total = BigDecimal.valueOf(-1100.0);
         Long walletTransactionId = 555L;
@@ -193,7 +202,13 @@ public class TransactionServiceImplTest {
         Payment response = new Payment(paymentId, new BigDecimal(3999), "error", "error", null);
         when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
 
-        assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
+        Transaction transaction = service.transfer(userId, recipient, amount);
+
+        assertEquals(4, transaction.getMovements().size());
+        assertEquals(new BigDecimal("0.0"), transaction.total());
+
+        validateRevertedMovements(Type.FEE, transaction);
+        validateRevertedMovements(Type.TRANSFER, transaction);
 
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total));
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total.negate()));
@@ -209,10 +224,12 @@ public class TransactionServiceImplTest {
 
         BigDecimal total = BigDecimal.valueOf(-1100.0);
         Long walletTransactionId = 555L;
-        when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId).
-                thenThrow(new WalletApiException("mocked wallet exception"));
+        when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         doThrow(new PaymentProviderApiException("mocked provider error")).when(paymentProviderAPIClient).createPayment(eq(sourceOwner), eq(recipient), eq(amount));
+
+        doThrow(new WalletApiException("mocked wallet exception")).when(walletAPIClient).createTransaction(eq(userId), eq(total.negate()));
+
         assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
 
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total));
@@ -242,5 +259,30 @@ public class TransactionServiceImplTest {
         verify(bankAccountRepository, times(1)).save(eq(recipient));
 
         verify(lockRepository, times(1)).close();
+    }
+
+    private void validateRevertedMovements(Type type, Transaction transaction) {
+        AtomicInteger total = new AtomicInteger();
+        AtomicInteger totalWithdraw = new AtomicInteger();
+        AtomicInteger totalRevert = new AtomicInteger();
+
+        transaction.getMovements().stream().filter(m -> m.getType() == type).forEach(m -> {
+            total.getAndIncrement();
+            switch (m.getOperation()) {
+                case WITHDRAW -> totalWithdraw.getAndIncrement();
+                case REVERT -> totalRevert.getAndIncrement();
+            }
+            System.out.println(String.format("type=%s operation=%s amount=%s", m.getType(), m.getOperation(), m.getAmount().toString()));
+            if (type == Type.FEE) {
+                assertNotNull(m.getWalletTransactionId());
+                assertNull(m.getPaymentId());
+            } else {
+                assertNotNull(m.getWalletTransactionId());
+            }
+        });
+
+        assertEquals(2, total.get());
+        assertEquals(1, totalWithdraw.get());
+        assertEquals(1, totalRevert.get());
     }
 }
