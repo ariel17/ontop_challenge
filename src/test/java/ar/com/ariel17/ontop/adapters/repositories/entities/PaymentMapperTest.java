@@ -3,7 +3,6 @@ package ar.com.ariel17.ontop.adapters.repositories.entities;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 public class PaymentMapperTest {
 
     private Payment payment;

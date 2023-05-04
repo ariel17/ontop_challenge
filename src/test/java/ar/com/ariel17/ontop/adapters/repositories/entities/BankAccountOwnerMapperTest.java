@@ -11,7 +11,6 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 public class BankAccountOwnerMapperTest {
 
     private BankAccountOwner owner;

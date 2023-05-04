@@ -9,7 +9,6 @@ import java.util.Currency;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@SpringBootTest
 public class BankAccountOwnerTest {
 
     private BankAccount account;
