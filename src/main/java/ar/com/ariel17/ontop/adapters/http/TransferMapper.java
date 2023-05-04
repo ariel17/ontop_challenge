@@ -19,11 +19,12 @@ public class TransferMapper {
 
     private Currency defaultCurrency;
 
-    public BankAccountOwner mapBankAccountOwnerFromRequest(TransferRequest request) {
+    public BankAccountOwner bankAccountOwnerFromTransferRequest(TransferRequest request) {
         Long ownerId = request.getRecipientId();
         if (ownerId != null) {
             return BankAccountOwner.builder().
                     id(ownerId).
+                    userId(request.getUserId()).
                     build();
         }
 
@@ -47,7 +48,7 @@ public class TransferMapper {
                 build();
     }
 
-    public TransferResponse mapTransactionToTransferResponse(Long userId, Transaction transaction) {
+    public TransferResponse transactionToTransferResponse(Long userId, Transaction transaction) {
         BigDecimal total = transaction.total();
 
         Operation operation;
@@ -67,6 +68,7 @@ public class TransferMapper {
                         operation(tm.getOperation()).
                         currency(tm.getCurrency()).
                         amount(tm.getAmount()).
+                        createdAt(tm.getCreatedAt()).
                         build());
             });
         }};
