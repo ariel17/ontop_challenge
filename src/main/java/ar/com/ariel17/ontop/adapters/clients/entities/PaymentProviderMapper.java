@@ -16,7 +16,7 @@ public class PaymentProviderMapper {
 
     private static final String COMPANY_TYPE = "COMPANY";
 
-    public PaymentProviderRequest mapRequest(BankAccountOwner from, BankAccountOwner to, BigDecimal amount) {
+    public PaymentProviderRequest toPaymentProviderRequest(BankAccountOwner from, BankAccountOwner to, BigDecimal amount) {
         PaymentProviderAccount sourceAccount = PaymentProviderAccount.builder().
                 accountNumber(from.getBankAccount().getAccount().toString()).
                 currency(from.getBankAccount().getCurrency()).
@@ -51,7 +51,7 @@ public class PaymentProviderMapper {
                 build();
     }
 
-    public Payment mapResponse(PaymentProviderResponse response) {
+    public Payment paymentProviderResponseToPayment(PaymentProviderResponse response) {
         PaymentProviderPaymentInfo paymentInfo = response.getPaymentInfo();
         PaymentProviderRequestInfo requestInfo = response.getRequestInfo();
         return new Payment(paymentInfo.getId(), paymentInfo.getAmount(), requestInfo.getStatus(), requestInfo.getError(), null);
