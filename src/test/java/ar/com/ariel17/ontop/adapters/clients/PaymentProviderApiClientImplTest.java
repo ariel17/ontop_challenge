@@ -102,7 +102,7 @@ public class PaymentProviderApiClientImplTest {
                 .thenReturn(response);
 
         Payment payment = client.createPayment(from, to, amount);
-        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
 
         assertEquals("Processing", payment.getStatus());
         assertEquals(new BigDecimal(1000), payment.getAmount());
@@ -116,7 +116,7 @@ public class PaymentProviderApiClientImplTest {
                 .thenReturn(response);
 
         assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
-        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class PaymentProviderApiClientImplTest {
                 .thenReturn(response);
 
         Payment payment = client.createPayment(from, to, amount);
-        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
         assertTrue(payment.isError());
     }
 
@@ -137,7 +137,7 @@ public class PaymentProviderApiClientImplTest {
                 .thenReturn(response);
 
         Payment payment = client.createPayment(from, to, amount);
-        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
         assertTrue(payment.isError());
     }
 }

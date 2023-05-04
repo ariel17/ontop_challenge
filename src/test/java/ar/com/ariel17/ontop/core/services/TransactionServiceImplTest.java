@@ -1,9 +1,6 @@
 package ar.com.ariel17.ontop.core.services;
 
-import ar.com.ariel17.ontop.core.clients.PaymentProviderApiClient;
-import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
-import ar.com.ariel17.ontop.core.clients.WalletApiClient;
-import ar.com.ariel17.ontop.core.clients.WalletApiException;
+import ar.com.ariel17.ontop.core.clients.*;
 import ar.com.ariel17.ontop.core.domain.*;
 import ar.com.ariel17.ontop.core.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,6 +145,17 @@ public class TransactionServiceImplTest {
     }
 
     @Test
+    public void testTransfer_getBalanceFailsByUserNotFound() throws Exception {
+        when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
+        when(lockRepository.acquire()).thenReturn(true);
+        doThrow(new UserNotFoundException("not found")).when(walletAPIClient).getBalance(eq(userId));
+
+        assertThrows(UserNotFoundException.class, () -> service.transfer(userId, recipient, amount));
+
+        verify(lockRepository, times(1)).close();
+    }
+
+    @Test
     public void testTransfer_walletTransactionFails() throws Exception {
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
@@ -157,6 +165,20 @@ public class TransactionServiceImplTest {
         doThrow(new WalletApiException("mocked exception")).when(walletAPIClient).createTransaction(eq(userId), eq(total));
 
         assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
+
+        verify(lockRepository, times(1)).close();
+    }
+
+    @Test
+    public void testTransfer_walletTransactionFailsByUserNotFound() throws Exception {
+        when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
+        when(lockRepository.acquire()).thenReturn(true);
+        when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
+
+        BigDecimal total = BigDecimal.valueOf(-1100.0);
+        doThrow(new UserNotFoundException("not found")).when(walletAPIClient).createTransaction(eq(userId), eq(total));
+
+        assertThrows(UserNotFoundException.class, () -> service.transfer(userId, recipient, amount));
 
         verify(lockRepository, times(1)).close();
     }
@@ -176,7 +198,7 @@ public class TransactionServiceImplTest {
         Transaction transaction = service.transfer(userId, recipient, amount);
 
         assertEquals(4, transaction.getMovements().size());
-        assertEquals(new BigDecimal("0.0"), transaction.total());
+        assertEquals(0, BigDecimal.ZERO.compareTo(transaction.total()));
 
         validateRevertedMovements(Type.FEE, transaction);
         validateRevertedMovements(Type.TRANSFER, transaction);
@@ -205,7 +227,7 @@ public class TransactionServiceImplTest {
         Transaction transaction = service.transfer(userId, recipient, amount);
 
         assertEquals(4, transaction.getMovements().size());
-        assertEquals(new BigDecimal("0.0"), transaction.total());
+        assertEquals(0, BigDecimal.ZERO.compareTo(transaction.total()));
 
         validateRevertedMovements(Type.FEE, transaction);
         validateRevertedMovements(Type.TRANSFER, transaction);

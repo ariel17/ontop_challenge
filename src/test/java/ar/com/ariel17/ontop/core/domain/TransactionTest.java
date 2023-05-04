@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 public class TransactionTest extends ValidatorTest {
@@ -19,7 +20,7 @@ public class TransactionTest extends ValidatorTest {
 
     private Long walletTransactionId;
 
-    private UUID paymentId;
+    private Payment payment;
 
     private Transaction t;
 
@@ -35,8 +36,7 @@ public class TransactionTest extends ValidatorTest {
         m2 = new Movement(null, 4321L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);
 
         walletTransactionId = 1234L;
-        paymentId = UUID.randomUUID();
-
+        payment = Payment.builder().id(UUID.randomUUID()).build();
         t = new Transaction();
     }
 
@@ -60,14 +60,14 @@ public class TransactionTest extends ValidatorTest {
     public void testSetPaymentId_valid() {
         t.addMovement(m1);
         t.addMovement(m2);
-        t.setPaymentId(paymentId);
-        for (Movement m : t.getMovements()) {
+        t.setPayment(payment);
+        t.getMovements().forEach(m -> {
             if (m.getType() == Type.FEE) {
                 assertNull(m.getPaymentId());
             } else {
-                assertEquals(paymentId, m.getPaymentId());
+                assertEquals(payment.getId(), m.getPaymentId());
             }
-        }
+        });
     }
 
     @Test
@@ -75,8 +75,6 @@ public class TransactionTest extends ValidatorTest {
         t.addMovement(m1);
         t.addMovement(m2);
         t.setWalletTransactionId(walletTransactionId);
-        for (Movement m : t.getMovements()) {
-            assertEquals(walletTransactionId, m.getWalletTransactionId());
-        }
+        t.getMovements().forEach(m -> assertEquals(walletTransactionId, m.getWalletTransactionId()));
     }
 }

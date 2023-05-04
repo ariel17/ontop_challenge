@@ -1,9 +1,11 @@
 package ar.com.ariel17.ontop.adapters.repositories;
 
 import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerEntity;
+import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerMapper;
 import ar.com.ariel17.ontop.adapters.repositories.jpa.JpaBankAccountRepository;
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Currency;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -29,9 +32,21 @@ public class BankAccountOwnerRepositoryImplTest {
     @BeforeEach
     public void setUp() {
         repository = new BankAccountRepositoryImpl(jpaRepository);
+        ownerId = 1000L;
 
-        BankAccount account = new BankAccount(4321L, 4321L, Currency.getInstance("USD"));
-        owner = new BankAccountOwner(null, 999L, account, "1234ABC", "John", "Snow", null);
+        BankAccount account = BankAccount.builder().
+                routing(4321L).
+                account(4321L).
+                currency(Currency.getInstance("USD")).
+                build();
+        owner = BankAccountOwner.builder().
+                id(ownerId).
+                userId(999L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").
+                build();
     }
 
     @Test
@@ -41,7 +56,9 @@ public class BankAccountOwnerRepositoryImplTest {
     }
 
     @Test
-    public void testGetById_ok() {
+    public void testGetById_ok() throws BankAccountOwnerNotFoundException {
+        BankAccountOwnerEntity entity = BankAccountOwnerMapper.INSTANCE.bankAccountOwnerToBankAccountOwnerEntity(owner);
+        when(jpaRepository.findById(eq(ownerId))).thenReturn(Optional.of(entity));
         repository.getById(ownerId);
         verify(jpaRepository, times(1)).findById(eq(ownerId));
     }

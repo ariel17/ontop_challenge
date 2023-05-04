@@ -2,6 +2,7 @@ package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,9 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Currency;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -33,8 +34,18 @@ public class BankAccountServiceImplTest {
     @BeforeEach
     public void setUp() {
         ownerId = 1234L;
-        BankAccount account = new BankAccount(1234L, 1234L, Currency.getInstance("USD"));
-        owner = new BankAccountOwner(null, 999L, account, "1234", "John", "Doe", null);
+        BankAccount account = BankAccount.builder().
+                account(1234L).
+                routing(1234L).
+                currency(Currency.getInstance("USD")).
+                build();
+        owner = BankAccountOwner.builder().
+                userId(999L).
+                bankAccount(account).
+                idNumber("1234").
+                firstName("John").
+                lastName("Snow").
+                build();
     }
 
     @Test
@@ -44,18 +55,17 @@ public class BankAccountServiceImplTest {
     }
 
     @Test
-    public void testGetById_present() {
-        when(repository.getById(eq(ownerId))).thenReturn(Optional.of(owner));
+    public void testGetById_found() throws BankAccountOwnerNotFoundException {
+        when(repository.getById(eq(ownerId))).thenReturn(owner);
         var o = service.getById(ownerId);
-        assertTrue(o.isPresent());
+        assertNotNull(o);
         verify(repository, times(1)).getById(eq(ownerId));
     }
 
     @Test
-    public void testGetById_notPresent() {
-        when(repository.getById(eq(ownerId))).thenReturn(Optional.empty());
-        var o = service.getById(ownerId);
-        assertTrue(o.isEmpty());
+    public void testGetById_notPresent() throws BankAccountOwnerNotFoundException {
+        doThrow(new BankAccountOwnerNotFoundException("not found")).when(repository).getById(eq(ownerId));
+        assertThrows(BankAccountOwnerNotFoundException.class, () -> service.getById(ownerId));
         verify(repository, times(1)).getById(eq(ownerId));
     }
 }

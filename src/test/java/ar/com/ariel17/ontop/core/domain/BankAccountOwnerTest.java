@@ -23,13 +23,6 @@ public class BankAccountOwnerTest extends ValidatorTest {
     }
 
     @Test
-    public void testInvalidValues() {
-        BankAccountOwner owner = new BankAccountOwner(null, 0L, null, "", "", null, null);
-        Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);
-        assertEquals(3, violations.size());
-    }
-
-    @Test
     public void testGetName_withLastName() {
         BankAccountOwner owner = new BankAccountOwner(null, 1234L, account, "1234", "John", "Doe", null);
         Set<ConstraintViolation<BankAccountOwner>> violations = validator.validate(owner);

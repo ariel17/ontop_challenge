@@ -1,5 +1,6 @@
 package ar.com.ariel17.ontop.adapters.clients;
 
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.clients.WalletApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,7 +59,7 @@ public class WalletApiClientImplTest {
     }
 
     @Test
-    public void testGetBalance_ok() throws WalletApiException {
+    public void testGetBalance_ok() throws WalletApiException, UserNotFoundException {
         String uri = client.getBalanceUri(userId);
         ResponseEntity<String> response = new ResponseEntity<>(balanceBodyOk, HttpStatus.OK);
         when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
@@ -70,36 +70,51 @@ public class WalletApiClientImplTest {
     }
 
     @Test
-    public void testGetBalance_error() {
-        for (HttpStatus statusCode : Arrays.asList(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR)) {
-            String uri = client.getBalanceUri(userId);
-            ResponseEntity<String> response = new ResponseEntity<>(bodyError, statusCode);
-            when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
-                    .thenReturn(response);
+    public void testGetBalance_error4xx() {
+        String uri = client.getBalanceUri(userId);
+        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.NOT_FOUND);
+        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(response);
 
-            assertThrows(WalletApiException.class, () -> client.getBalance(userId));
-        }
+        assertThrows(UserNotFoundException.class, () -> client.getBalance(userId));
     }
 
     @Test
-    public void testCreateTransaction_ok() throws WalletApiException {
+    public void testGetBalance_error5xx() {
+        String uri = client.getBalanceUri(userId);
+        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.INTERNAL_SERVER_ERROR);
+        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(response);
+
+        assertThrows(WalletApiException.class, () -> client.getBalance(userId));
+    }
+
+    @Test
+    public void testCreateTransaction_ok() throws WalletApiException, UserNotFoundException {
         ResponseEntity<String> response = new ResponseEntity<>(transactionBodyOk, HttpStatus.OK);
         when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
         Long transactionId = client.createTransaction(userId, new BigDecimal(2000));
         assertEquals(66319L, transactionId);
-        verify(client, times(1)).post(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq("{\"amount\":2000,\"user_id\":10}"), eq(true));
+        verify(client, times(1)).post(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq("{\"amount\":2000,\"user_id\":10}"));
     }
 
     @Test
-    public void testCreateTransaction_error() {
-        for (HttpStatus statusCode : Arrays.asList(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR)) {
-            ResponseEntity<String> response = new ResponseEntity<>(bodyError, statusCode);
-            when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
-                    .thenReturn(response);
+    public void testCreateTransaction_error5xx() {
+        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.INTERNAL_SERVER_ERROR);
+        when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
+                .thenReturn(response);
 
-            assertThrows(WalletApiException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
-        }
+        assertThrows(WalletApiException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
+    }
+
+    @Test
+    public void testCreateTransaction_error4xx() {
+        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.NOT_FOUND);
+        when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
+                .thenReturn(response);
+
+        assertThrows(UserNotFoundException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
     }
 }
