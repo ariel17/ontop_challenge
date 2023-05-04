@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -13,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Data
-public class BankAccountOwner {
+public class BankAccountOwner implements Serializable {
 
     private Long id;
 

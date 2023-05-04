@@ -1,11 +1,11 @@
 package ar.com.ariel17.ontop.core.domain;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
@@ -16,15 +16,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Data
-public class Payment {
+public class Payment implements Serializable {
 
-    @NotNull(message = "ID cannot be null")
     private UUID id;
 
-    @NotNull(message = "Amount cannot be null")
     private BigDecimal amount;
 
-    @NotNull(message = "Status cannot be null")
     private String status;
 
     private String error;

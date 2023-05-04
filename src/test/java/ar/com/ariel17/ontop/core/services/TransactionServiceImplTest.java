@@ -77,6 +77,7 @@ public class TransactionServiceImplTest {
     public void testTransfer_ok() throws Exception {
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
 
         BigDecimal total = BigDecimal.valueOf(-1100.0);
@@ -114,6 +115,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_lockNotAcquired() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(false);
 
@@ -124,6 +126,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_insufficientBalance() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(200));
@@ -135,6 +138,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_getBalanceFails() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         doThrow(new WalletApiException("mocked exception")).when(walletAPIClient).getBalance(eq(userId));
@@ -146,6 +150,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_getBalanceFailsByUserNotFound() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         doThrow(new UserNotFoundException("not found")).when(walletAPIClient).getBalance(eq(userId));
@@ -157,6 +162,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_walletTransactionFails() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
@@ -171,6 +177,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_walletTransactionFailsByUserNotFound() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
@@ -185,6 +192,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_paymentProviderFails() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
@@ -211,6 +219,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_paymentProviderResponseIsError() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
@@ -240,6 +249,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_paymentProviderFailsAndLaterWalletFails() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
@@ -262,6 +272,7 @@ public class TransactionServiceImplTest {
 
     @Test
     public void testTransfer_movementRepositoryFails() throws Exception {
+        when(bankAccountRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(context.getBean(eq(LockRepository.class), eq(userId))).thenReturn(lockRepository);
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(5000));
