@@ -5,6 +5,7 @@ import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
 import ar.com.ariel17.ontop.core.clients.WalletApiClient;
 import ar.com.ariel17.ontop.core.clients.WalletApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.domain.Operation;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import ar.com.ariel17.ontop.core.domain.Transaction;
 import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
@@ -51,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionException(e);
         }
 
-        Transaction transaction = transactionFactory.createEgress(userId, sourceOwner, recipient, amount);
+        Transaction transaction = transactionFactory.createWithdraw(userId, sourceOwner, recipient, amount);
         BigDecimal total = transaction.total();
         Long walletTransactionId = null;
 
@@ -70,40 +71,39 @@ public class TransactionServiceImpl implements TransactionService {
             Payment payment = null;
             try {
                 payment = paymentProviderAPIClient.createPayment(sourceOwner, recipient, amount);
-                if (payment.isError()) {
-                    // TODO fix this. The transaction needs to complete and add restoring movements
-                    rollbackWalletTransaction(userId, total, walletTransactionId);
-                    throw new TransactionException("Payment provider response is error");
-                }
+
+            } catch (PaymentProviderApiException e) {
+                Long revertWalletTransactionId = rollbackWalletTransaction(userId, total, walletTransactionId);
+                transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
+                return movementRepository.save(transaction);
+
             } finally {
                 paymentRepository.save(payment);
+            }
+
+            if (payment.isError()) {
+                Long revertWalletTransactionId = rollbackWalletTransaction(userId, total, walletTransactionId);
+                transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
             }
 
             transaction.setPaymentId(payment.getId());
             transaction = movementRepository.save(transaction);
 
-        } catch (PaymentProviderApiException e) {
-            rollbackWalletTransaction(userId, total, walletTransactionId);
-            throw new TransactionException(e);
-
         } catch (TransactionException e) {
             throw e;
 
         } catch (Exception e) {
-            throw new TransactionException(e);
+            throw new TransactionException("Unexpected exception", e);
         }
 
         return transaction;
     }
 
-    private void rollbackWalletTransaction(Long userId, BigDecimal total, Long originalWalletTransferId) throws TransactionException {
-        Long transactionId;
+    private Long rollbackWalletTransaction(Long userId, BigDecimal total, Long originalWalletTransferId) throws TransactionException {
         try {
-            transactionId = walletAPIClient.createTransaction(userId, total);
+            return walletAPIClient.createTransaction(userId, total);
         } catch (WalletApiException e) {
             throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", originalWalletTransferId), e);
         }
-
-        // TODO log transaction id
     }
 }
