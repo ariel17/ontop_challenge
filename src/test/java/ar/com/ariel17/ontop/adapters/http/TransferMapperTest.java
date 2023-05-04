@@ -52,6 +52,7 @@ public class TransferMapperTest {
 
     @Test
     public void testBankAccountOwnerFromTransferRequest_onlyRecipientId() {
+        // TODO assert not null, not only equals
         transferRequest = TransferRequest.builder().recipientId(1234L).build();
         BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(transferRequest);
         assertEquals(transferRequest.getRecipientId(), owner.getId());
@@ -170,6 +171,7 @@ public class TransferMapperTest {
     }
 
     private void testBankAccountOwnerFromTransferRequest_withRecipient(boolean withCurrency) {
+        // TODO assert not null, not only equals
         TransferAccount.TransferAccountBuilder builder = TransferAccount.builder().
                 routingNumber(1234L).
                 accountNumber(1234L);
@@ -209,6 +211,7 @@ public class TransferMapperTest {
     }
 
     public void testTransferResponse(Operation operation) {
+        // TODO assert not null, not only equals
         TransferResponse response = mapper.transactionToTransferResponse(userId, transaction);
         assertEquals(response.getUserId(), userId);
         assertEquals(response.getStatus(), transaction.getPayment().getStatus());

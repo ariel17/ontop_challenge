@@ -36,6 +36,7 @@ public class BankAccountOwnerMapperTest {
     }
 
     private void compare(BankAccountOwner owner, BankAccountOwnerEntity entity) {
+        // TODO assert not null, not only equals
         assertEquals(owner.getId(), entity.getId());
         assertEquals(owner.getBankAccount().getRouting(), entity.getRouting());
         assertEquals(owner.getBankAccount().getAccount(), entity.getAccount());

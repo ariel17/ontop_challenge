@@ -35,6 +35,7 @@ public class PaymentMapperTest {
     }
 
     private void compare(Payment payment, PaymentEntity entity) {
+        // TODO assert not null, not only equals
         assertEquals(payment.getId(), entity.getId());
         assertEquals(payment.getAmount(), entity.getAmount());
         assertEquals(payment.getStatus(), entity.getStatus());

@@ -56,6 +56,7 @@ public class MovementMapperTest {
     }
 
     private void compare(Movement movement, MovementEntity entity) {
+        // TODO assert not null, not only equals
         assertEquals(movement.getId(), entity.getId());
         assertEquals(movement.getUserId(), entity.getUserId());
         assertEquals(movement.getType(), entity.getType());
