@@ -33,7 +33,7 @@ public class TransferController {
 
     @PostMapping("/transfer")
     public TransferResponse createTransfer(@Valid @RequestBody TransferRequest request) {
-        BankAccountOwner owner = mapper.mapBankAccountOwnerFromRequest(request);
+        BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(request);
         Transaction transaction = null;
         try {
             transaction = service.transfer(request.getUserId(), owner, request.getAmount());
@@ -44,6 +44,6 @@ public class TransferController {
         } catch (TransactionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString(), e);
         }
-        return mapper.mapTransactionToTransferResponse(request.getUserId(), transaction);
+        return mapper.transactionToTransferResponse(request.getUserId(), transaction);
     }
 }
