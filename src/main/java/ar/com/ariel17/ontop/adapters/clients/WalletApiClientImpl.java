@@ -52,7 +52,7 @@ public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
         WalletBalanceResponse balance;
         try {
             balance = mapper.readValue(body, WalletBalanceResponse.class);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new WalletApiException(e);
         }
 

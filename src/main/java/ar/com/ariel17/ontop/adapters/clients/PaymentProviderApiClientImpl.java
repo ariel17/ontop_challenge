@@ -56,7 +56,7 @@ public class PaymentProviderApiClientImpl extends ApiClient implements PaymentPr
         PaymentProviderResponse responseEntity;
         try {
             responseEntity = mapper.readValue(responseBody, PaymentProviderResponse.class);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             throw new PaymentProviderApiException(e);
         }
 

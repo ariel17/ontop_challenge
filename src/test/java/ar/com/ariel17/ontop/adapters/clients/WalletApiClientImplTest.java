@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -90,6 +91,24 @@ public class WalletApiClientImplTest {
     }
 
     @Test
+    public void testGetBalance_exchangeException() {
+        String uri = client.getBalanceUri(userId);
+        doThrow(new RestClientException("mocked exception")).when(restTemplate).exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class));
+
+        assertThrows(WalletApiException.class, () -> client.getBalance(userId));
+    }
+
+    @Test
+    public void testGetBalance_2xxWithInvalidBody() {
+        String uri = client.getBalanceUri(userId);
+        ResponseEntity<String> response = new ResponseEntity<>("{\"invalid_body", HttpStatus.OK);
+        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
+                .thenReturn(response);
+
+        assertThrows(WalletApiException.class, () -> client.getBalance(userId));
+    }
+
+    @Test
     public void testCreateTransaction_ok() throws WalletApiException, UserNotFoundException {
         ResponseEntity<String> response = new ResponseEntity<>(transactionBodyOk, HttpStatus.OK);
         when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
@@ -116,5 +135,21 @@ public class WalletApiClientImplTest {
                 .thenReturn(response);
 
         assertThrows(UserNotFoundException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
+    }
+
+    @Test
+    public void testCreateTransaction_2xxWithInvalidBody() {
+        ResponseEntity<String> response = new ResponseEntity<>("{\"invalid_body", HttpStatus.OK);
+        when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
+                .thenReturn(response);
+
+        assertThrows(WalletApiException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
+    }
+
+    @Test
+    public void testCreateTransaction_exchangeException() {
+        doThrow(new RestClientException("mocked exception")).when(restTemplate).exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class));
+
+        assertThrows(WalletApiException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
     }
 }

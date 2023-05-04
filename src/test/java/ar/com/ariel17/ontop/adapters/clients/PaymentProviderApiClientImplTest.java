@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -110,7 +111,7 @@ public class PaymentProviderApiClientImplTest {
     }
 
     @Test
-    public void testGetBalance_4xxError() {
+    public void testCreatePayment_4xxError() {
         ResponseEntity<String> response = new ResponseEntity<>(body4xxError, HttpStatus.BAD_REQUEST);
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
@@ -120,7 +121,7 @@ public class PaymentProviderApiClientImplTest {
     }
 
     @Test
-    public void testGetBalance_5xxErrorTimeout() throws PaymentProviderApiException {
+    public void testCreatePayment_5xxErrorTimeout() throws PaymentProviderApiException {
         ResponseEntity<String> response = new ResponseEntity<>(body5xxErrorTimeout, HttpStatus.INTERNAL_SERVER_ERROR);
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
@@ -131,7 +132,26 @@ public class PaymentProviderApiClientImplTest {
     }
 
     @Test
-    public void testGetBalance_5xxErrorRejection() throws PaymentProviderApiException {
+    public void testCreatePayment_exchangeException() throws PaymentProviderApiException {
+        ResponseEntity<String> response = new ResponseEntity<>(body5xxErrorTimeout, HttpStatus.INTERNAL_SERVER_ERROR);
+        doThrow(new RestClientException("mocked exception")).when(restTemplate).exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class));
+
+        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
+    }
+
+    @Test
+    public void testCreatePayment_2xxWithInvalidBody() throws PaymentProviderApiException {
+        ResponseEntity<String> response = new ResponseEntity<>("{\"invalid_body", HttpStatus.OK);
+        when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
+                .thenReturn(response);
+
+        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
+        verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
+    }
+
+    @Test
+    public void testCreatePayment_5xxErrorRejection() throws PaymentProviderApiException {
         ResponseEntity<String> response = new ResponseEntity<>(body5xxErrorRejection, HttpStatus.INTERNAL_SERVER_ERROR);
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
