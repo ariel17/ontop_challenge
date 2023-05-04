@@ -2,18 +2,14 @@ package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.clients.PaymentProviderApiClient;
 import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.clients.WalletApiClient;
-import ar.com.ariel17.ontop.core.clients.WalletApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Operation;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import ar.com.ariel17.ontop.core.domain.Transaction;
-import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
-import ar.com.ariel17.ontop.core.repositories.LockRepository;
-import ar.com.ariel17.ontop.core.repositories.MovementRepository;
-import ar.com.ariel17.ontop.core.repositories.PaymentRepository;
+import ar.com.ariel17.ontop.core.repositories.*;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -44,12 +40,19 @@ public class TransactionServiceImpl implements TransactionService {
     private MovementRepository movementRepository;
 
     @Override
-    public Transaction transfer(@NonNull Long userId, @NonNull BankAccountOwner recipient, @NonNull BigDecimal amount) throws TransactionException {
+    public Transaction transfer(
+            Long userId, BankAccountOwner recipient, BigDecimal amount
+    ) throws BankAccountOwnerNotFoundException, UserNotFoundException, TransactionException {
 
-        try {
-            bankAccountRepository.save(recipient);
-        } catch (Exception e) {
-            throw new TransactionException(e);
+        if (recipient.getId() == null) {
+            try {
+                bankAccountRepository.save(recipient);
+            } catch (Exception e) {
+                throw new TransactionException(e);
+            }
+
+        } else {
+            recipient = bankAccountRepository.getById(recipient.getId());
         }
 
         Transaction transaction = transactionFactory.createWithdraw(userId, sourceOwner, recipient, amount);
@@ -58,7 +61,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         try (LockRepository lockRepository = context.getBean(LockRepository.class, userId)) {
             if (!lockRepository.acquire()) {
-                throw new TransactionException(String.format("Lock for user %d could not be acquired", userId));
+                String message = String.format("Lock for user %d could not be acquired", userId);
+                throw new TransactionException(message);
             }
 
             if (walletAPIClient.getBalance(userId).compareTo(total) == INSUFFICIENT_BALANCE) {
@@ -73,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
                 payment = paymentProviderAPIClient.createPayment(sourceOwner, recipient, amount);
 
             } catch (PaymentProviderApiException e) {
-                Long revertWalletTransactionId = rollbackWalletTransaction(userId, total, walletTransactionId);
+                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total);
                 transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
                 return movementRepository.save(transaction);
 
@@ -82,14 +86,14 @@ public class TransactionServiceImpl implements TransactionService {
             }
 
             if (payment.isError()) {
-                Long revertWalletTransactionId = rollbackWalletTransaction(userId, total, walletTransactionId);
+                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total);
                 transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
             }
 
-            transaction.setPaymentId(payment.getId());
+            transaction.setPayment(payment);
             transaction = movementRepository.save(transaction);
 
-        } catch (TransactionException e) {
+        } catch (TransactionException | UserNotFoundException e) {
             throw e;
 
         } catch (Exception e) {
@@ -97,13 +101,5 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         return transaction;
-    }
-
-    private Long rollbackWalletTransaction(Long userId, BigDecimal total, Long originalWalletTransferId) throws TransactionException {
-        try {
-            return walletAPIClient.createTransaction(userId, total);
-        } catch (WalletApiException e) {
-            throw new TransactionException(String.format("Failed to restore Wallet transaction ID=%d", originalWalletTransferId), e);
-        }
     }
 }

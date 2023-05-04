@@ -1,7 +1,9 @@
 package ar.com.ariel17.ontop.core.services;
 
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Transaction;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,5 +21,7 @@ public interface TransactionService {
      * @param recipient The bank account owner data to transfer money to.
      * @param amount    The amount of money to egress.
      */
-    Transaction transfer(Long userId, BankAccountOwner recipient, BigDecimal amount) throws TransactionException;
+    Transaction transfer(
+            Long userId, BankAccountOwner recipient, BigDecimal amount
+    ) throws BankAccountOwnerNotFoundException, UserNotFoundException, TransactionException;
 }
