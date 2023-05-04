@@ -14,9 +14,9 @@ import java.util.Currency;
 @Data
 public class BankAccount {
 
-    private Long routing;
+    private String routing;
 
-    private Long account;
+    private String account;
 
     private Currency currency;
 }

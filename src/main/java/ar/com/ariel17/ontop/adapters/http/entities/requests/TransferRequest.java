@@ -3,6 +3,7 @@ package ar.com.ariel17.ontop.adapters.http.entities.requests;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -28,8 +29,10 @@ public class TransferRequest {
     private Long userId;
 
     @JsonProperty("recipient_id")
+    @Positive(message = "Recipient ID has to be positive")
     private Long recipientId;
 
+    @Valid
     private TransferRecipient recipient;
 
     private Currency currency;

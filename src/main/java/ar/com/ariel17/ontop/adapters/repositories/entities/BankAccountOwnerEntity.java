@@ -23,11 +23,11 @@ public class BankAccountOwnerEntity {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(nullable = false)
-    private Long routing;
+    @Column(nullable = false, length = 9)
+    private String routing;
 
-    @Column(nullable = false)
-    private Long account;
+    @Column(nullable = false, length = 9)
+    private String account;
 
     @Column(nullable = false, length = 3)
     private Currency currency;
@@ -41,7 +41,7 @@ public class BankAccountOwnerEntity {
     @Column(name = "last_name", nullable = false, length = 20)
     private String lastName;
 
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", insertable = false)
     @CreationTimestamp
     private Date createdAt;
 }
