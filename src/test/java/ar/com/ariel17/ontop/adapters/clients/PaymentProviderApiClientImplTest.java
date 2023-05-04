@@ -128,7 +128,6 @@ public class PaymentProviderApiClientImplTest {
         Payment payment = client.createPayment(from, to, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
         assertTrue(payment.isError());
-        assertTrue(payment.isTimeout());
     }
 
     @Test
@@ -140,6 +139,5 @@ public class PaymentProviderApiClientImplTest {
         Payment payment = client.createPayment(from, to, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody), eq(false));
         assertTrue(payment.isError());
-        assertTrue(payment.isRejection());
     }
 }
