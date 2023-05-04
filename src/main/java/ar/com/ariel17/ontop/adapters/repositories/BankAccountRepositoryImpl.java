@@ -4,6 +4,7 @@ import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerEntit
 import ar.com.ariel17.ontop.adapters.repositories.entities.BankAccountOwnerMapper;
 import ar.com.ariel17.ontop.adapters.repositories.jpa.JpaBankAccountRepository;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -27,13 +28,12 @@ public class BankAccountRepositoryImpl implements BankAccountRepository {
     }
 
     @Override
-    public Optional<BankAccountOwner> getById(Long id) {
+    public BankAccountOwner getById(Long id) throws BankAccountOwnerNotFoundException {
         Optional<BankAccountOwnerEntity> o = jpaRepository.findById(id);
         if (o.isEmpty()) {
-            return Optional.empty();
+            throw new BankAccountOwnerNotFoundException(String.format("Bank account owner not found for id=%d", id));
         }
         BankAccountOwnerEntity entity = o.get();
-        BankAccountOwner owner = BankAccountOwnerMapper.INSTANCE.bankAccountOwnerEntityToBankAccountOwner(entity);
-        return Optional.of(owner);
+        return BankAccountOwnerMapper.INSTANCE.bankAccountOwnerEntityToBankAccountOwner(entity);
     }
 }

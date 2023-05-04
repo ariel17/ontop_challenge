@@ -1,9 +1,8 @@
 package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * BankAccountService provides the contract for implementators on bank account
@@ -19,5 +18,5 @@ public interface BankAccountService {
      */
     void create(BankAccountOwner account);
 
-    Optional<BankAccountOwner> getById(Long id);
+    BankAccountOwner getById(Long id) throws BankAccountOwnerNotFoundException;
 }

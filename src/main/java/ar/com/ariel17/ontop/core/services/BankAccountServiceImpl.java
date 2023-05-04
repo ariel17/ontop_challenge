@@ -1,13 +1,12 @@
 package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
 import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public Optional<BankAccountOwner> getById(Long id) {
+    public BankAccountOwner getById(Long id) throws BankAccountOwnerNotFoundException {
         return repository.getById(id);
     }
 }
