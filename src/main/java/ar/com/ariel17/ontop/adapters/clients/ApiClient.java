@@ -17,38 +17,18 @@ public abstract class ApiClient {
         mapper = new ObjectMapper();
     }
 
-    protected String get(String uri) throws IllegalStateException {
+    protected ResponseEntity<String> get(String uri) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> request = new HttpEntity<>(null, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
-        String body = response.getBody();
-        HttpStatusCode statusCode = response.getStatusCode();
-        handleErrors(uri, statusCode, body, true);
-        return body;
+        return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
     }
 
-    protected String post(String uri, String requestBody, boolean raiseException) throws IllegalStateException {
+    protected ResponseEntity<String> post(String uri, String requestBody) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
-        String responseBody = response.getBody();
-        HttpStatusCode statusCode = response.getStatusCode();
-
-        handleErrors(uri, statusCode, responseBody, raiseException);
-        return responseBody;
-    }
-
-    private void handleErrors(String uri, HttpStatusCode statusCode, String responseBody, boolean raiseException) {
-        if (statusCode.is5xxServerError() || statusCode.is4xxClientError()) {
-            // TODO log error response
-            if (raiseException) {
-                throw new IllegalStateException(String.format("Error requesting resource: uri=%s, status_code=%d, body=%s", uri, statusCode.value(), responseBody));
-            }
-        }
+        return restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
     }
 }

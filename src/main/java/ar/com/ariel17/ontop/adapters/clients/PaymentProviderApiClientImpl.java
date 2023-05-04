@@ -9,6 +9,8 @@ import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,7 +31,7 @@ public class PaymentProviderApiClientImpl extends ApiClient implements PaymentPr
 
     @Override
     public Payment createPayment(BankAccountOwner from, BankAccountOwner to, BigDecimal amount) throws PaymentProviderApiException {
-        PaymentProviderRequest request = providerMapper.mapRequest(from, to, amount);
+        PaymentProviderRequest request = providerMapper.toPaymentProviderRequest(from, to, amount);
 
         String requestBody;
         try {
@@ -38,20 +40,26 @@ public class PaymentProviderApiClientImpl extends ApiClient implements PaymentPr
             throw new PaymentProviderApiException(e);
         }
 
-        String responseBody;
+        ResponseEntity<String> response;
         try {
-            responseBody = post(PAYMENT_URI, requestBody, false);
-        } catch (IllegalStateException e) {
+            response = post(PAYMENT_URI, requestBody);
+        } catch (Exception e) {
             throw new PaymentProviderApiException(e);
         }
 
-        PaymentProviderResponse response;
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.is4xxClientError()) {
+            throw new PaymentProviderApiException("Payment provider API error");
+        }
+
+        String responseBody = response.getBody();
+        PaymentProviderResponse responseEntity;
         try {
-            response = mapper.readValue(responseBody, PaymentProviderResponse.class);
+            responseEntity = mapper.readValue(responseBody, PaymentProviderResponse.class);
         } catch (JsonProcessingException e) {
             throw new PaymentProviderApiException(e);
         }
 
-        return providerMapper.mapResponse(response);
+        return providerMapper.paymentProviderResponseToPayment(responseEntity);
     }
 }

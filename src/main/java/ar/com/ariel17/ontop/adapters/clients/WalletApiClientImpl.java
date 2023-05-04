@@ -5,9 +5,12 @@ import ar.com.ariel17.ontop.adapters.clients.entities.responses.WalletBalanceRes
 import ar.com.ariel17.ontop.adapters.clients.entities.responses.WalletTransactionResponse;
 import ar.com.ariel17.ontop.core.clients.WalletApiClient;
 import ar.com.ariel17.ontop.core.clients.WalletApiException;
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,13 +31,22 @@ public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
     }
 
     @Override
-    public BigDecimal getBalance(Long userId) throws WalletApiException {
-        String body;
-
+    public BigDecimal getBalance(Long userId) throws UserNotFoundException, WalletApiException {
+        ResponseEntity<String> response;
         try {
-            body = this.get(getBalanceUri(userId));
-        } catch (IllegalStateException e) {
+            response = this.get(getBalanceUri(userId));
+        } catch (Exception e) {
             throw new WalletApiException(e);
+        }
+
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.is4xxClientError()) {
+            throw new UserNotFoundException(String.format("User ID=%d not found", userId));
+        }
+
+        String body = response.getBody();
+        if (statusCode.is5xxServerError()) {
+            throw new WalletApiException(String.format("Wallet API error: status_code=%d, body=%s", statusCode.value(), body));
         }
 
         WalletBalanceResponse balance;
@@ -48,21 +60,32 @@ public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
     }
 
     @Override
-    public Long createTransaction(Long userId, BigDecimal amount) throws WalletApiException {
-        WalletTransactionRequest body = new WalletTransactionRequest(amount, userId);
+    public Long createTransaction(Long userId, BigDecimal amount) throws UserNotFoundException, WalletApiException {
+        WalletTransactionRequest transactionRequest = new WalletTransactionRequest(amount, userId);
 
         String requestBody;
         try {
-            requestBody = mapper.writeValueAsString(body);
+            requestBody = mapper.writeValueAsString(transactionRequest);
         } catch (JsonProcessingException e) {
             throw new WalletApiException(e);
         }
 
-        String responseBody;
+        ResponseEntity<String> response;
         try {
-            responseBody = post(TRANSACTIONS_URI, requestBody, true);
-        } catch (IllegalStateException e) {
+            response = post(TRANSACTIONS_URI, requestBody);
+        } catch (Exception e) {
             throw new WalletApiException(e);
+        }
+
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.is4xxClientError()) {
+            throw new UserNotFoundException(String.format("User ID=%d not found", userId));
+        }
+
+        String responseBody = response.getBody();
+        if (statusCode.is5xxServerError()) {
+            String message = String.format("Wallet API error: status_code=%d, body=%s", statusCode.value(), responseBody);
+            throw new WalletApiException(message);
         }
 
         WalletTransactionResponse transactionResponse;
