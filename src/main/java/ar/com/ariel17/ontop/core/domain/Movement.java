@@ -1,12 +1,8 @@
 package ar.com.ariel17.ontop.core.domain;
 
-import ar.com.ariel17.ontop.core.domain.validators.NonZeroBigDecimal;
-import ar.com.ariel17.ontop.core.domain.validators.TypeAndAccounts;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -17,7 +13,6 @@ import java.util.UUID;
  * Movement represents a money displace. Relates the wallet user with a bank
  * account transaction.
  */
-@TypeAndAccounts(message = "Invalid combination for `type`, `from` and `to fields.")
 @AllArgsConstructor
 @Builder
 @Data
@@ -25,19 +20,14 @@ public class Movement {
 
     private Long id;
 
-    @NotNull(message = "User ID cannot be null")
     private Long userId;
 
-    @NotNull(message = "Type cannot be null")
     private Type type;
 
-    @NotNull(message = "Operation cannot be null")
     private Operation operation;
 
-    @NotNull(message = "Currency cannot be null")
     private Currency currency;
 
-    @NonZeroBigDecimal(message = "Amount cannot be zero")
     private BigDecimal amount;
 
     private BankAccount from;
@@ -50,11 +40,11 @@ public class Movement {
 
     private Date createdAt;
 
-    public void setWalletTransactionId(@NonNull Long walletTransactionId) {
+    public void setWalletTransactionId(Long walletTransactionId) {
         this.walletTransactionId = walletTransactionId;
     }
 
-    public void setPaymentId(@NonNull UUID paymentId) {
+    public void setPaymentId(UUID paymentId) {
         if (type == Type.FEE) {
             throw new IllegalArgumentException("Cannot set payment ID to a fee movement");
         }
