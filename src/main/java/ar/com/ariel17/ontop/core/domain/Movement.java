@@ -4,6 +4,7 @@ import ar.com.ariel17.ontop.core.domain.validators.NonZeroBigDecimal;
 import ar.com.ariel17.ontop.core.domain.validators.TypeAndAccounts;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
  */
 @TypeAndAccounts(message = "Invalid combination for `type`, `from` and `to fields.")
 @AllArgsConstructor
+@Builder
 @Data
 public class Movement {
 
