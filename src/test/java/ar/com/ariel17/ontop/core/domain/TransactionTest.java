@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
-public class TransactionTest extends ValidatorTest {
+public class TransactionTest {
 
     private Movement m1;
 
@@ -26,7 +26,6 @@ public class TransactionTest extends ValidatorTest {
 
     @BeforeEach
     public void setUp() {
-        super.setUp();
         Currency currency = Currency.getInstance("USD");
         BigDecimal amount = new BigDecimal(1234);
         BankAccount account1 = new BankAccount(1234L, 1234L, currency);

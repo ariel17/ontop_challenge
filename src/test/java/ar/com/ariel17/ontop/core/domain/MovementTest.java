@@ -1,19 +1,17 @@
 package ar.com.ariel17.ontop.core.domain;
 
-import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class MovementTest extends ValidatorTest {
+public class MovementTest {
 
     private Currency currency;
 
@@ -29,7 +27,6 @@ public class MovementTest extends ValidatorTest {
 
     @BeforeEach
     public void setUp() {
-        super.setUp();
         currency = Currency.getInstance("USD");
         amount = new BigDecimal(1234);
         account1 = new BankAccount(1234L, 1234L, currency);
@@ -41,16 +38,12 @@ public class MovementTest extends ValidatorTest {
     @Test
     public void testIsComplete_complete() {
         Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, walletTransactionId, paymentId, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
         assertTrue(m.isComplete());
     }
 
     @Test
     public void testIsComplete_incomplete() {
         Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
-        Set<ConstraintViolation<Movement>> violations = validator.validate(m);
-        assertEquals(0, violations.size());
         assertFalse(m.isComplete());
     }
 

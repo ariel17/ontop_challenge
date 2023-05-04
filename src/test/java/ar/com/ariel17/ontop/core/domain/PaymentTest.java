@@ -9,11 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest
-public class PaymentTest extends ValidatorTest {
+public class PaymentTest {
 
     @BeforeEach
     public void setUp() {
-        super.setUp();
     }
 
     @Test
