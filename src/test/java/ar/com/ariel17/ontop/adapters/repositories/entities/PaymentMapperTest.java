@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PaymentMapperTest {
 
@@ -16,7 +17,13 @@ public class PaymentMapperTest {
 
     @BeforeEach
     public void setUp() {
-        payment = new Payment(UUID.randomUUID(), new BigDecimal("1000.01"), "error", "This is an error description", new Date());
+        payment = Payment.builder().
+                id(UUID.randomUUID()).
+                amount(new BigDecimal("1000.01")).
+                status("error").
+                error("This is an error description").
+                createdAt(new Date()).
+                build();
     }
 
     @Test
@@ -33,11 +40,24 @@ public class PaymentMapperTest {
     }
 
     private void compare(Payment payment, PaymentEntity entity) {
-        // TODO assert not null, not only equals
+        assertNotNull(payment.getId());
+        assertNotNull(entity.getId());
         assertEquals(payment.getId(), entity.getId());
+
+        assertNotNull(payment.getAmount());
+        assertNotNull(entity.getAmount());
         assertEquals(payment.getAmount(), entity.getAmount());
+
+        assertNotNull(payment.getStatus());
+        assertNotNull(entity.getStatus());
         assertEquals(payment.getStatus(), entity.getStatus());
+
+        assertNotNull(payment.getError());
+        assertNotNull(entity.getError());
         assertEquals(payment.getError(), entity.getError());
+
+        assertNotNull(payment.getCreatedAt());
+        assertNotNull(entity.getCreatedAt());
         assertEquals(payment.getCreatedAt(), entity.getCreatedAt());
     }
 }
