@@ -2,7 +2,10 @@ package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.clients.*;
 import ar.com.ariel17.ontop.core.domain.*;
-import ar.com.ariel17.ontop.core.repositories.*;
+import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
+import ar.com.ariel17.ontop.core.repositories.LockRepository;
+import ar.com.ariel17.ontop.core.repositories.MovementRepository;
+import ar.com.ariel17.ontop.core.repositories.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +61,12 @@ public class TransactionServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
+        Currency currency = Currency.getInstance("USD");
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(currency).build();
         sourceOwner = new BankAccountOwner(null, 0L, account, "", "ON TOP INC", "", null);
 
         BigDecimal feePercent = new BigDecimal("0.1");
@@ -68,8 +76,17 @@ public class TransactionServiceImplTest {
 
         userId = 10L;
 
-        account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
-        recipient = new BankAccountOwner(null, userId, account, "1234", "John", "Doe", null);
+        account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        recipient = BankAccountOwner.builder().
+                userId(userId).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
         amount = new BigDecimal(1000);
     }
 
@@ -85,8 +102,8 @@ public class TransactionServiceImplTest {
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         UUID paymentId = UUID.randomUUID();
-        Payment response = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
-        when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
+        Payment paymentResponse = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
+        when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(paymentResponse);
 
         when(movementRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -96,14 +113,10 @@ public class TransactionServiceImplTest {
 
         verify(lockRepository, times(1)).close();
 
-        for (Movement m : transaction.getMovements()) {
+        transaction.getMovements().forEach(m -> {
             assertEquals(m.getWalletTransactionId(), walletTransactionId);
-            if (m.getType() == Type.FEE) {
-                assertNull(m.getPaymentId());
-            } else {
-                assertEquals(paymentId, m.getPaymentId());
-            }
-        }
+            assertEquals(paymentResponse, m.getPayment());
+        });
     }
 
     @Test
@@ -208,8 +221,8 @@ public class TransactionServiceImplTest {
         assertEquals(4, transaction.getMovements().size());
         assertEquals(0, BigDecimal.ZERO.compareTo(transaction.total()));
 
-        validateRevertedMovements(Type.FEE, transaction);
-        validateRevertedMovements(Type.TRANSFER, transaction);
+        validateRevertedMovements(MovementType.FEE, transaction, true);
+        validateRevertedMovements(MovementType.TRANSFER, transaction, true);
 
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total));
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total.negate()));
@@ -238,8 +251,8 @@ public class TransactionServiceImplTest {
         assertEquals(4, transaction.getMovements().size());
         assertEquals(0, BigDecimal.ZERO.compareTo(transaction.total()));
 
-        validateRevertedMovements(Type.FEE, transaction);
-        validateRevertedMovements(Type.TRANSFER, transaction);
+        validateRevertedMovements(MovementType.FEE, transaction, false);
+        validateRevertedMovements(MovementType.TRANSFER, transaction, false);
 
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total));
         verify(walletAPIClient, times(1)).createTransaction(eq(userId), eq(total.negate()));
@@ -294,7 +307,7 @@ public class TransactionServiceImplTest {
         verify(lockRepository, times(1)).close();
     }
 
-    private void validateRevertedMovements(Type type, Transaction transaction) {
+    private void validateRevertedMovements(MovementType type, Transaction transaction, boolean paymentFailed) {
         AtomicInteger total = new AtomicInteger();
         AtomicInteger totalWithdraw = new AtomicInteger();
         AtomicInteger totalRevert = new AtomicInteger();
@@ -305,13 +318,8 @@ public class TransactionServiceImplTest {
                 case WITHDRAW -> totalWithdraw.getAndIncrement();
                 case REVERT -> totalRevert.getAndIncrement();
             }
-            System.out.println(String.format("type=%s operation=%s amount=%s", m.getType(), m.getOperation(), m.getAmount().toString()));
-            if (type == Type.FEE) {
-                assertNotNull(m.getWalletTransactionId());
-                assertNull(m.getPaymentId());
-            } else {
-                assertNotNull(m.getWalletTransactionId());
-            }
+            assertNotNull(m.getWalletTransactionId());
+            assertEquals(paymentFailed, m.getPayment() == null);
         });
 
         assertEquals(2, total.get());

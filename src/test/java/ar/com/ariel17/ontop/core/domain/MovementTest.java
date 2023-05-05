@@ -15,45 +15,71 @@ public class MovementTest {
 
     private BigDecimal amount;
 
-    private BankAccount account1;
+    private BankAccountOwner owner1;
 
-    private BankAccount account2;
+    private BankAccountOwner owner2;
 
     private Long walletTransactionId;
 
-    private UUID paymentId;
+    private Payment payment;
 
     @BeforeEach
     public void setUp() {
         currency = Currency.getInstance("USD");
         amount = new BigDecimal(1234);
-        account1 = new BankAccount("0123456789", "012345678", currency);
-        account2 = new BankAccount("9876543210", "876543210", currency);
+
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(currency).build();
+        owner1 = BankAccountOwner.builder().
+                userId(0L).
+                bankAccount(account).
+                firstName("ONTOP INC").build();
+
+        account = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                currency(currency).build();
+        owner2 = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
         walletTransactionId = 1234L;
-        paymentId = UUID.randomUUID();
+        payment = Payment.builder().
+                id(UUID.randomUUID()).
+                status("ok").build();
     }
 
     @Test
     public void testIsComplete_complete() {
-        Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, walletTransactionId, paymentId, null);
+        Movement m = Movement.builder().
+                userId(4321L).
+                type(MovementType.TRANSFER).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount).
+                onTopAccount(owner1).
+                externalAccount(owner2).
+                walletTransactionId(walletTransactionId).
+                payment(payment).build();
         assertTrue(m.isComplete());
     }
 
     @Test
     public void testIsComplete_incomplete() {
-        Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
+        Movement m = Movement.builder().
+                userId(4321L).
+                type(MovementType.TRANSFER).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount).
+                onTopAccount(owner1).
+                externalAccount(owner2).build();
         assertFalse(m.isComplete());
-    }
-
-    @Test
-    public void testSetPaymentId_nonFee() {
-        Movement m = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
-        m.setPaymentId(paymentId);
-    }
-
-    @Test
-    public void testSetPaymentId_fee() {
-        Movement m = new Movement(null, 1234L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);
-        assertThrows(IllegalArgumentException.class, () -> m.setPaymentId(paymentId));
     }
 }

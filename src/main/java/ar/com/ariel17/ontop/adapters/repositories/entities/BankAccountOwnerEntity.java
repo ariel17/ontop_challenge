@@ -1,5 +1,6 @@
 package ar.com.ariel17.ontop.adapters.repositories.entities;
 
+import ar.com.ariel17.ontop.core.domain.BankAccountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class BankAccountOwnerEntity {
     private String account;
 
     @Column(length = 20)
-    private String type;
+    private BankAccountType type;
 
     @Column(nullable = false, length = 3)
     private Currency currency;

@@ -14,18 +14,31 @@ public class BankAccountOwnerTest {
 
     @BeforeEach
     public void setUp() {
-        account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
+        account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
     }
 
     @Test
     public void testGetName_withLastName() {
-        BankAccountOwner owner = new BankAccountOwner(null, 1234L, account, "1234", "John", "Doe", null);
+        BankAccountOwner owner = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Doe").build();
         assertEquals("John Doe", owner.getName());
     }
 
     @Test
     public void testGetName_withoutLastName() {
-        BankAccountOwner owner = new BankAccountOwner(null, 1234L, account, "1234", "John", "", null);
+        BankAccountOwner owner = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").build();
         assertEquals("John", owner.getName());
     }
 }

@@ -28,9 +28,9 @@ public class TransferMapperTest {
 
     private Long userId;
 
-    private BankAccount account1;
+    private BankAccountOwner onTopAccount;
 
-    private BankAccount account2;
+    private BankAccountOwner externalAccount;
 
     @BeforeEach
     public void setUp() {
@@ -38,8 +38,30 @@ public class TransferMapperTest {
         mapper = new TransferMapper(currency);
         userId = 10L;
 
-        account1 = new BankAccount("0123456789", "012345678", currency);
-        account2 = new BankAccount("9876543210", "876543210", currency);
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        onTopAccount = BankAccountOwner.builder().
+                id(1L).
+                userId(10L).
+                bankAccount(account).
+                firstName("ONTOP INC").build();
+
+        account = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        externalAccount = BankAccountOwner.builder().
+                id(2L).
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
         Payment payment = Payment.builder().
                 id(UUID.randomUUID()).
                 status("error").
@@ -50,6 +72,7 @@ public class TransferMapperTest {
         transaction = new Transaction();
         transaction.setWalletTransactionId(1234L);
         transaction.setPayment(payment);
+        transaction.setExternalAccount(externalAccount);
     }
 
     @Test
@@ -91,18 +114,18 @@ public class TransferMapperTest {
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-1234)).
-                from(account1).
-                to(account2).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(new Date()).
                 build());
         transaction.addMovement(Movement.builder().
                 id(222L).
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-5678)).
@@ -117,18 +140,18 @@ public class TransferMapperTest {
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.TOP_UP).
                 currency(currency).
                 amount(new BigDecimal(1234)).
-                from(account1).
-                to(account2).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(new Date()).
                 build());
         transaction.addMovement(Movement.builder().
                 id(222L).
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
                 operation(Operation.TOP_UP).
                 currency(currency).
                 amount(new BigDecimal(5678)).
@@ -143,29 +166,29 @@ public class TransferMapperTest {
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-1234)).
-                from(account1).
-                to(account2).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(new Date()).
                 build());
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.REVERT).
                 currency(currency).
                 amount(new BigDecimal(1234)).
-                from(account1).
-                to(account2).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(new Date()).
                 build());
         transaction.addMovement(Movement.builder().
                 id(222L).
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-5678)).
@@ -174,7 +197,7 @@ public class TransferMapperTest {
         transaction.addMovement(Movement.builder().
                 id(222L).
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
                 operation(Operation.REVERT).
                 currency(currency).
                 amount(new BigDecimal(5678)).
@@ -258,6 +281,10 @@ public class TransferMapperTest {
         assertNotNull(response.getOperation());
         assertEquals(response.getOperation(), operation);
 
+        assertNotNull(response.getRecipientId());
+        assertNotNull(transaction.getExternalAccount().getId());
+        assertEquals(response.getRecipientId(), transaction.getExternalAccount().getId());
+
         assertEquals(response.getMovements().size(), transaction.getMovements().size());
 
         for (int i = 0; i < response.getMovements().size(); i++) {
@@ -283,10 +310,6 @@ public class TransferMapperTest {
             assertNotNull(m1.getAmount());
             assertNotNull(m2.getAmount());
             assertEquals(m1.getAmount(), m2.getAmount());
-
-            // TODO need this
-            // assertNotNull(m1.getRecipientId());
-            // assertNotNull(m2.getTo());
 
             assertNotNull(m1.getCreatedAt());
             assertNotNull(m2.getCreatedAt());

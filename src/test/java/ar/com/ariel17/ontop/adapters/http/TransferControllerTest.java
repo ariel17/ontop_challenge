@@ -51,37 +51,59 @@ public class TransferControllerTest {
 
         userId = 10L;
 
-        BankAccount account1 = new BankAccount("0123456789", "012345678", currency);
-        BankAccount account2 = new BankAccount("9876543210", "876543210", currency);
-        Payment payment = Payment.builder().
-                id(UUID.randomUUID()).
-                status("processing").
-                amount(new BigDecimal(10000)).
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(currency).build();
+        BankAccountOwner onTopAccount = BankAccountOwner.builder().
+                id(1L).
+                userId(0L).
+                bankAccount(account).
+                firstName("ONTOP INC").
                 build();
 
+        account = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                currency(currency).build();
+        BankAccountOwner externalAccount = BankAccountOwner.builder().
+                id(2L).
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
+        Payment payment = Payment.builder().
+                id(UUID.randomUUID()).
+                status("ok").
+                createdAt(new Date()).build();
+
         transaction = new Transaction();
-        transaction.setWalletTransactionId(1234L);
-        transaction.setPayment(payment);
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-1234)).
-                from(account1).
-                to(account2).
-                createdAt(new Date()).
-                build());
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
+                createdAt(new Date()).build());
         transaction.addMovement(Movement.builder().
                 id(222L).
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(new BigDecimal(-5678)).
-                createdAt(new Date()).
-                build());
+                createdAt(new Date()).build());
+        transaction.setWalletTransactionId(1234L);
+        transaction.setPayment(payment);
+        transaction.setExternalAccount(externalAccount);
     }
 
     @Test
@@ -127,6 +149,8 @@ public class TransferControllerTest {
         TransferResponse response = controller.createTransfer(request);
         assertEquals(response.getUserId(), userId);
         assertEquals(response.getOperation(), Operation.WITHDRAW);
+        assertEquals(response.getStatus(), transaction.getPayment().getStatus());
+        assertEquals(response.getRecipientId(), transaction.getExternalAccount().getId());
         assertEquals(response.getMovements().size(), transaction.getMovements().size());
     }
 

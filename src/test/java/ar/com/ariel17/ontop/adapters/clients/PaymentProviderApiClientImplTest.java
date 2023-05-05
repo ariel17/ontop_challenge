@@ -3,6 +3,7 @@ package ar.com.ariel17.ontop.adapters.clients;
 import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.domain.BankAccountType;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,9 +40,9 @@ public class PaymentProviderApiClientImplTest {
 
     private String body5xxErrorRejection;
 
-    private BankAccountOwner from;
+    private BankAccountOwner onTopAccount;
 
-    private BankAccountOwner to;
+    private BankAccountOwner externalAccount;
 
     private String requestBody;
 
@@ -88,11 +88,29 @@ public class PaymentProviderApiClientImplTest {
                     }
                 }""";
 
-        BankAccount account1 = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
-        BankAccount account2 = new BankAccount("9876543210", "876543210", Currency.getInstance("USD"));
-        from = new BankAccountOwner(1L, 99L, account1, "123ABC", "John", "Doe", new Date());
-        to = new BankAccountOwner(2L, 100L, account2, "ABC123", "John", "Snow", new Date());
-        requestBody = "{\"source\":{\"type\":\"COMPANY\",\"sourceInformation\":{\"name\":\"John Doe\"},\"account\":{\"accountNumber\":\"012345678\",\"currency\":\"USD\",\"routingNumber\":\"0123456789\"}},\"destination\":{\"name\":\"John Snow\",\"account\":{\"accountNumber\":\"876543210\",\"currency\":\"USD\",\"routingNumber\":\"9876543210\"}},\"amount\":2500}";
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        onTopAccount = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account).
+                firstName("ONTOP INC").build();
+
+        account = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        externalAccount = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
+        requestBody = "{\"source\":{\"type\":\"COMPANY\",\"sourceInformation\":{\"name\":\"ONTOP INC\"},\"account\":{\"accountNumber\":\"012345678\",\"currency\":\"USD\",\"routingNumber\":\"0123456789\"}},\"destination\":{\"name\":\"John Snow\",\"account\":{\"accountNumber\":\"876543210\",\"currency\":\"USD\",\"routingNumber\":\"9876543210\"}},\"amount\":2500}";
         amount = new BigDecimal(2500);
     }
 
@@ -102,7 +120,7 @@ public class PaymentProviderApiClientImplTest {
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
-        Payment payment = client.createPayment(from, to, amount);
+        Payment payment = client.createPayment(onTopAccount, externalAccount, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
 
         assertEquals("Processing", payment.getStatus());
@@ -116,7 +134,7 @@ public class PaymentProviderApiClientImplTest {
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
-        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
+        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(onTopAccount, externalAccount, amount));
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
     }
 
@@ -126,7 +144,7 @@ public class PaymentProviderApiClientImplTest {
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
-        Payment payment = client.createPayment(from, to, amount);
+        Payment payment = client.createPayment(onTopAccount, externalAccount, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
         assertTrue(payment.isError());
     }
@@ -136,7 +154,7 @@ public class PaymentProviderApiClientImplTest {
         ResponseEntity<String> response = new ResponseEntity<>(body5xxErrorTimeout, HttpStatus.INTERNAL_SERVER_ERROR);
         doThrow(new RestClientException("mocked exception")).when(restTemplate).exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class));
 
-        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
+        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(onTopAccount, externalAccount, amount));
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
     }
 
@@ -146,7 +164,7 @@ public class PaymentProviderApiClientImplTest {
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
-        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(from, to, amount));
+        assertThrows(PaymentProviderApiException.class, () -> client.createPayment(onTopAccount, externalAccount, amount));
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
     }
 
@@ -156,7 +174,7 @@ public class PaymentProviderApiClientImplTest {
         when(restTemplate.exchange(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(HttpMethod.POST), any(), eq(String.class)))
                 .thenReturn(response);
 
-        Payment payment = client.createPayment(from, to, amount);
+        Payment payment = client.createPayment(onTopAccount, externalAccount, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
         assertTrue(payment.isError());
     }

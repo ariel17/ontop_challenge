@@ -24,5 +24,8 @@ public class TransferResponse {
 
     private Operation operation;
 
+    @JsonProperty("recipient_id")
+    private Long recipientId;
+
     private List<TransferMovement> movements;
 }

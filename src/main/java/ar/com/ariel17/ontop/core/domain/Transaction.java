@@ -13,6 +13,8 @@ import java.util.List;
 @Data
 public class Transaction {
 
+    private BankAccountOwner externalAccount;
+
     private List<Movement> movements;
 
     private Payment payment;
@@ -43,8 +45,7 @@ public class Transaction {
      */
     public void setPayment(Payment payment) {
         this.payment = payment;
-        movements.stream().filter(m -> m.getType() != Type.FEE).
-                forEach(m -> m.setPaymentId(payment.getId()));
+        movements.stream().forEach(m -> m.setPayment(payment));
     }
 
     public void setWalletTransactionId(@NonNull Long walletTransactionId) {

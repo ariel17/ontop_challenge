@@ -12,11 +12,13 @@ public interface BankAccountOwnerMapper {
 
     @Mapping(source = "entity.routing", target = "bankAccount.routing")
     @Mapping(source = "entity.account", target = "bankAccount.account")
+    @Mapping(source = "entity.type", target = "bankAccount.type")
     @Mapping(source = "entity.currency", target = "bankAccount.currency")
     BankAccountOwner bankAccountOwnerEntityToBankAccountOwner(BankAccountOwnerEntity entity);
 
     @Mapping(source = "owner.bankAccount.routing", target = "routing")
     @Mapping(source = "owner.bankAccount.account", target = "account")
+    @Mapping(source = "owner.bankAccount.type", target = "type")
     @Mapping(source = "owner.bankAccount.currency", target = "currency")
     BankAccountOwnerEntity bankAccountOwnerToBankAccountOwnerEntity(BankAccountOwner owner);
 }

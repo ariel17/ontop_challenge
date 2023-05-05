@@ -1,17 +1,13 @@
 package ar.com.ariel17.ontop.adapters.repositories.entities;
 
-import ar.com.ariel17.ontop.core.domain.BankAccount;
-import ar.com.ariel17.ontop.core.domain.Movement;
-import ar.com.ariel17.ontop.core.domain.Operation;
-import ar.com.ariel17.ontop.core.domain.Type;
+import ar.com.ariel17.ontop.core.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MovementMapperTest {
 
@@ -19,9 +15,48 @@ public class MovementMapperTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount from = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
-        BankAccount to = new BankAccount("9876543210", "876543210", Currency.getInstance("USD"));
-        movement = new Movement(10L, 99L, Type.TRANSFER, Operation.WITHDRAW, Currency.getInstance("USD"), new BigDecimal("-100.01"), from, to, 5000L, UUID.randomUUID(), new Date());
+        Currency currency = Currency.getInstance("USD");
+        BankAccount account1 = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(currency).build();
+        BankAccountOwner onTopAccount = BankAccountOwner.builder().
+                id(1L).
+                userId(10L).
+                bankAccount(account1).
+                firstName("ONTOP INC").build();
+
+        BankAccount account2 = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                currency(currency).build();
+        BankAccountOwner externalAccount = BankAccountOwner.builder().
+                id(2L).
+                userId(10L).
+                bankAccount(account2).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
+        Payment payment = Payment.builder().
+                id(UUID.randomUUID()).
+                status("ok").
+                createdAt(new Date()).
+                amount(new BigDecimal(1000)).build();
+
+        movement = Movement.builder().
+                id(99L).
+                userId(4321L).
+                type(MovementType.TRANSFER).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(new BigDecimal(1000)).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
+                walletTransactionId(100L).
+                createdAt(new Date()).
+                payment(payment).build();
     }
 
     @Test
@@ -79,36 +114,63 @@ public class MovementMapperTest {
         assertNotNull(entity.getAmount());
         assertEquals(movement.getAmount(), entity.getAmount());
 
-        assertNotNull(movement.getFrom().getRouting());
-        assertNotNull(entity.getFromRouting());
-        assertEquals(movement.getFrom().getRouting(), entity.getFromRouting());
+        BankAccountOwner onTopM = movement.getOnTopAccount();
+        BankAccountOwnerEntity onTopE = entity.getOnTopAccount();
+        assertNotNull(onTopM.getId());
+        assertNotNull(onTopE.getId());
+        assertEquals(onTopM.getId(), onTopE.getId());
 
-        assertNotNull(movement.getFrom().getAccount());
-        assertNotNull(entity.getFromAccount());
-        assertEquals(movement.getFrom().getAccount(), entity.getFromAccount());
+        assertNotNull(onTopM.getBankAccount().getRouting());
+        assertNotNull(onTopE.getRouting());
+        assertEquals(onTopM.getBankAccount().getRouting(), onTopE.getRouting());
 
-        assertNotNull(movement.getFrom().getCurrency());
-        assertNotNull(entity.getCurrency());
-        assertEquals(movement.getFrom().getCurrency(), entity.getCurrency());
+        assertNotNull(onTopM.getBankAccount().getAccount());
+        assertNotNull(onTopE.getAccount());
+        assertEquals(onTopM.getBankAccount().getAccount(), onTopE.getAccount());
 
-        assertNotNull(movement.getTo().getRouting());
-        assertNotNull(entity.getToRouting());
-        assertEquals(movement.getTo().getRouting(), entity.getToRouting());
+        assertNotNull(onTopM.getBankAccount().getType());
+        assertNotNull(onTopE.getType());
+        assertEquals(onTopM.getBankAccount().getType(), onTopE.getType());
 
-        assertNotNull(movement.getTo().getAccount());
-        assertNotNull(entity.getToAccount());
-        assertEquals(movement.getTo().getAccount(), entity.getToAccount());
+        assertNotNull(onTopM.getBankAccount().getCurrency());
+        assertNotNull(onTopE.getCurrency());
+        assertEquals(onTopM.getBankAccount().getCurrency(), onTopE.getCurrency());
 
-        assertNotNull(movement.getTo().getCurrency());
-        assertEquals(movement.getTo().getCurrency(), entity.getCurrency());
+        BankAccountOwner externalM = movement.getExternalAccount();
+        BankAccountOwnerEntity externalE = entity.getExternalAccount();
+        assertNotNull(externalM.getId());
+        assertNotNull(externalE.getId());
+        assertEquals(externalM.getId(), externalE.getId());
+
+        assertNotNull(externalM.getBankAccount().getRouting());
+        assertNotNull(externalE.getRouting());
+        assertEquals(externalM.getBankAccount().getRouting(), externalE.getRouting());
+
+        assertNotNull(externalM.getBankAccount().getAccount());
+        assertNotNull(externalE.getAccount());
+        assertEquals(externalM.getBankAccount().getAccount(), externalE.getAccount());
+
+        assertNull(externalM.getBankAccount().getType());
+        assertNull(externalE.getType());
+
+        assertNotNull(externalM.getBankAccount().getCurrency());
+        assertNotNull(externalE.getCurrency());
+        assertEquals(externalM.getBankAccount().getCurrency(), externalE.getCurrency());
 
         assertNotNull(movement.getWalletTransactionId());
         assertNotNull(entity.getWalletTransactionId());
         assertEquals(movement.getWalletTransactionId(), entity.getWalletTransactionId());
 
-        assertNotNull(movement.getPaymentId());
-        assertNotNull(entity.getPaymentId());
-        assertEquals(movement.getPaymentId(), entity.getPaymentId());
+        assertNotNull(movement.getPayment());
+        assertNotNull(entity.getPayment());
+
+        Payment pM = movement.getPayment();
+        PaymentEntity pE = entity.getPayment();
+        assertEquals(pM.getId(), pE.getId());
+        assertEquals(pM.getStatus(), pE.getStatus());
+        assertEquals(pM.getError(), pE.getError());
+        assertEquals(pM.getAmount(), pE.getAmount());
+        assertEquals(pM.getCreatedAt(), pE.getCreatedAt());
 
         assertNotNull(movement.getCreatedAt());
         assertNotNull(entity.getCreatedAt());

@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private BankAccountRepository bankAccountRepository;
 
-    private BankAccountOwner sourceOwner;
+    private BankAccountOwner onTopAccount;
 
     private TransactionFactory transactionFactory;
 
@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
             logger.info("Bank account fetched: user_id={}, owner_id={}", userId, recipient.getId());
         }
 
-        Transaction transaction = transactionFactory.createWithdraw(userId, sourceOwner, recipient, amount);
+        Transaction transaction = transactionFactory.createWithdraw(userId, onTopAccount, recipient, amount);
         BigDecimal total = transaction.total();
         Long walletTransactionId = null;
 
@@ -86,7 +86,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             Payment payment = null;
             try {
-                payment = paymentProviderAPIClient.createPayment(sourceOwner, recipient, amount);
+                payment = paymentProviderAPIClient.createPayment(onTopAccount, recipient, amount);
 
             } catch (PaymentProviderApiException e) {
                 logger.error("Transfer from provider FAILED: user_id={}", userId, e);

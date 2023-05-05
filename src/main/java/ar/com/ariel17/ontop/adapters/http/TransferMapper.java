@@ -78,6 +78,7 @@ public class TransferMapper {
                 status(transaction.getPayment().getStatus()).
                 operation(operation).
                 movements(movements).
+                recipientId(transaction.getExternalAccount().getId()).
                 build();
     }
 }

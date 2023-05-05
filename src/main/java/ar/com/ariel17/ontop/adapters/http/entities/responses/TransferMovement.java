@@ -1,7 +1,7 @@
 package ar.com.ariel17.ontop.adapters.http.entities.responses;
 
 import ar.com.ariel17.ontop.core.domain.Operation;
-import ar.com.ariel17.ontop.core.domain.Type;
+import ar.com.ariel17.ontop.core.domain.MovementType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -22,16 +22,13 @@ public class TransferMovement {
 
     private Long id;
 
-    private Type type;
+    private MovementType type;
 
     private Operation operation;
 
     private Currency currency;
 
     private BigDecimal amount;
-
-    @JsonProperty("recipient_id")
-    private Long recipientId;
 
     @JsonProperty("created_at")
     private Date createdAt;

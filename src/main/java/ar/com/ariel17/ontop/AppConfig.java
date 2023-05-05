@@ -91,6 +91,7 @@ public class AppConfig implements ApplicationContextAware {
                 build();
 
         return BankAccountOwner.builder().
+                userId(0L).
                 bankAccount(account).
                 idNumber("").
                 firstName(onTopName).

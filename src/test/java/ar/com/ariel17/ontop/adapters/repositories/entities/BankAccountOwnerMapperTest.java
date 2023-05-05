@@ -2,6 +2,7 @@ package ar.com.ariel17.ontop.adapters.repositories.entities;
 
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.domain.BankAccountType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,8 +18,19 @@ public class BankAccountOwnerMapperTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
-        owner = new BankAccountOwner(10L, 99L, account, "123ABC", "John", "Doe", new Date());
+        BankAccount account = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(Currency.getInstance("USD")).build();
+        owner = BankAccountOwner.builder().
+                id(999L).
+                userId(10L).
+                bankAccount(account).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").
+                createdAt(new Date()).build();
     }
 
     @Test

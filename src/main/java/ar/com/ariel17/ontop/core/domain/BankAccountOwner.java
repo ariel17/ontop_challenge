@@ -31,6 +31,9 @@ public class BankAccountOwner implements Serializable {
     private Date createdAt;
 
     public String getName() {
+        if (lastName == null) {
+            return firstName.strip();
+        }
         return String.format("%s %s", firstName, lastName).strip();
     }
 }

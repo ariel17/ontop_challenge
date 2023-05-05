@@ -8,7 +8,6 @@ import java.util.Currency;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TransactionTest {
 
@@ -26,14 +25,53 @@ public class TransactionTest {
     public void setUp() {
         Currency currency = Currency.getInstance("USD");
         BigDecimal amount = new BigDecimal(1234);
-        BankAccount account1 = new BankAccount("0123456789", "012345678", currency);
-        BankAccount account2 = new BankAccount("9876543210", "876543210", currency);
 
-        m1 = new Movement(null, 4321L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
-        m2 = new Movement(null, 4321L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);
+        BankAccount account1 = BankAccount.builder().
+                routing("0123456789").
+                account("012345678").
+                type(BankAccountType.COMPANY).
+                currency(currency).build();
+        BankAccountOwner onTopAccount = BankAccountOwner.builder().
+                userId(0L).
+                bankAccount(account1).
+                firstName("ONTOP INC").
+                build();
+
+        BankAccount account2 = BankAccount.builder().
+                routing("9876543210").
+                account("876543210").
+                currency(currency).build();
+        BankAccountOwner externalAccount = BankAccountOwner.builder().
+                userId(10L).
+                bankAccount(account2).
+                idNumber("123ABC").
+                firstName("John").
+                lastName("Snow").build();
+
+        m1 = Movement.builder().
+                userId(4321L).
+                type(MovementType.TRANSFER).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).build();
+
+        m2 = Movement.builder().
+                userId(4321L).
+                type(MovementType.FEE).
+                operation(Operation.WITHDRAW).
+                currency(currency).
+                amount(amount).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).build();
 
         walletTransactionId = 1234L;
-        payment = Payment.builder().id(UUID.randomUUID()).build();
+
+        payment = Payment.builder().
+                id(UUID.randomUUID()).
+                status("ok").build();
+
         t = new Transaction();
     }
 
@@ -51,20 +89,6 @@ public class TransactionTest {
         assertEquals(new BigDecimal(1234), t.total());
         t.addMovement(m2);
         assertEquals(new BigDecimal(2468), t.total());
-    }
-
-    @Test
-    public void testSetPaymentId_valid() {
-        t.addMovement(m1);
-        t.addMovement(m2);
-        t.setPayment(payment);
-        t.getMovements().forEach(m -> {
-            if (m.getType() == Type.FEE) {
-                assertNull(m.getPaymentId());
-            } else {
-                assertEquals(payment.getId(), m.getPaymentId());
-            }
-        });
     }
 
     @Test

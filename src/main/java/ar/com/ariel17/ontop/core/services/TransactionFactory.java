@@ -2,7 +2,6 @@ package ar.com.ariel17.ontop.core.services;
 
 import ar.com.ariel17.ontop.core.domain.*;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,11 +27,11 @@ public class TransactionFactory {
      * @param amount The amount of currency to withdraw.
      * @return The transaction with associated movements.
      */
-    public Transaction createWithdraw(@NonNull Long userId, @NonNull BankAccountOwner from, @NonNull BankAccountOwner to, @NonNull BigDecimal amount) throws TransactionException {
-        Currency currency = from.getBankAccount().getCurrency();
+    public Transaction createWithdraw(Long userId, BankAccountOwner onTopAccount, BankAccountOwner externalAccount, BigDecimal amount) throws TransactionException {
+        Currency currency = onTopAccount.getBankAccount().getCurrency();
 
-        if (!currency.equals(to.getBankAccount().getCurrency())) {
-            throw new TransactionException("Cannot egress money between different currencies");
+        if (!currency.equals(externalAccount.getBankAccount().getCurrency())) {
+            throw new TransactionException("Cannot withdraw between different currencies");
         }
 
         Transaction transaction = new Transaction();
@@ -40,18 +39,18 @@ public class TransactionFactory {
 
         transaction.addMovement(Movement.builder().
                 userId(userId).
-                type(Type.TRANSFER).
+                type(MovementType.TRANSFER).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(amount).
-                from(from.getBankAccount()).
-                to(to.getBankAccount()).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(now).
                 build());
 
         transaction.addMovement(Movement.builder().
                 userId(userId).
-                type(Type.FEE).
+                type(MovementType.FEE).
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(amount.multiply(feePercent)).
@@ -70,6 +69,9 @@ public class TransactionFactory {
                     operation(Operation.REVERT).
                     currency(m.getCurrency()).
                     amount(m.getAmount().negate()).
+                    onTopAccount(m.getOnTopAccount()).
+                    externalAccount(m.getExternalAccount()).
+                    payment(m.getPayment()).
                     walletTransactionId(reverWalletTransactionId).
                     createdAt(now).
                     build());

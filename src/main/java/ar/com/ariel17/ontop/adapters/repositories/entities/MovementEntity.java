@@ -1,7 +1,7 @@
 package ar.com.ariel17.ontop.adapters.repositories.entities;
 
+import ar.com.ariel17.ontop.core.domain.MovementType;
 import ar.com.ariel17.ontop.core.domain.Operation;
-import ar.com.ariel17.ontop.core.domain.Type;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "movements")
@@ -27,7 +26,7 @@ public class MovementEntity {
     private Long userId;
 
     @Column(nullable = false)
-    private Type type;
+    private MovementType type;
 
     @Column(nullable = false)
     private Operation operation;
@@ -38,23 +37,20 @@ public class MovementEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "ontop_account_id")
-    private Long onTopAccountId;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "ontop_account_id", referencedColumnName = "id")
+    private BankAccountOwnerEntity onTopAccount;
 
-    @Column(name = "external_account_id")
-    private Long externalAccountId;
-
-    @Column(name = "to_routing", length = 10)
-    private String toRouting;
-
-    @Column(name = "to_account", length = 10)
-    private String toAccount;
+    @OneToOne
+    @JoinColumn(name = "external_account_id", referencedColumnName = "id")
+    private BankAccountOwnerEntity externalAccount;
 
     @Column(name = "wallet_transaction_id", nullable = false)
     private Long walletTransactionId;
 
-    @Column(name = "payment_id")
-    private UUID paymentId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    private PaymentEntity payment;
 
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
