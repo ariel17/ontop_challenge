@@ -21,7 +21,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountOwner getById(Long id) throws BankAccountOwnerNotFoundException {
-        return repository.getById(id);
+    public BankAccountOwner getByIdAndUserId(Long id, Long userId) throws BankAccountOwnerNotFoundException {
+        return repository.getByIdAndUserId(id, userId);
     }
 }

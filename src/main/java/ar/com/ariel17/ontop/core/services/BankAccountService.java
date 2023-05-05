@@ -18,5 +18,5 @@ public interface BankAccountService {
      */
     void create(BankAccountOwner account);
 
-    BankAccountOwner getById(Long id) throws BankAccountOwnerNotFoundException;
+    BankAccountOwner getByIdAndUserId(Long id, Long userId) throws BankAccountOwnerNotFoundException;
 }
