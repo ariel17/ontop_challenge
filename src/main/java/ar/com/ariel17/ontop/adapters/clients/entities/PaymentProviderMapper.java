@@ -14,13 +14,11 @@ import java.math.BigDecimal;
 
 public class PaymentProviderMapper {
 
-    private static final String COMPANY_TYPE = "COMPANY";
-
     public PaymentProviderRequest toPaymentProviderRequest(BankAccountOwner from, BankAccountOwner to, BigDecimal amount) {
         PaymentProviderAccount sourceAccount = PaymentProviderAccount.builder().
-                accountNumber(from.getBankAccount().getAccount().toString()).
+                accountNumber(from.getBankAccount().getAccount()).
                 currency(from.getBankAccount().getCurrency()).
-                routingNumber(from.getBankAccount().getRouting().toString()).
+                routingNumber(from.getBankAccount().getRouting()).
                 build();
 
         PaymentProviderSourceInformation sourceInformation = PaymentProviderSourceInformation.builder().
@@ -28,15 +26,15 @@ public class PaymentProviderMapper {
                 build();
 
         PaymentProviderOwner source = PaymentProviderOwner.builder().
-                type(COMPANY_TYPE).
+                type(from.getBankAccount().getType().getType()).
                 sourceInformation(sourceInformation).
                 account(sourceAccount).
                 build();
 
         PaymentProviderAccount destinationAccount = PaymentProviderAccount.builder().
-                accountNumber(to.getBankAccount().getAccount().toString()).
+                accountNumber(to.getBankAccount().getAccount()).
                 currency(to.getBankAccount().getCurrency()).
-                routingNumber(to.getBankAccount().getRouting().toString()).
+                routingNumber(to.getBankAccount().getRouting()).
                 build();
 
         PaymentProviderOwner destination = PaymentProviderOwner.builder().
