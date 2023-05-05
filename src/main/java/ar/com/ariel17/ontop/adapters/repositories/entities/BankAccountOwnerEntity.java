@@ -23,10 +23,10 @@ public class BankAccountOwnerEntity {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(nullable = false, length = 9)
+    @Column(nullable = false, length = 10)
     private String routing;
 
-    @Column(nullable = false, length = 9)
+    @Column(nullable = false, length = 10)
     private String account;
 
     @Column(nullable = false, length = 3)
