@@ -14,8 +14,7 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TransferMapperTest {
 
@@ -50,15 +49,26 @@ public class TransferMapperTest {
 
     @Test
     public void testBankAccountOwnerFromTransferRequest_onlyRecipientId() {
-        // TODO assert not null, not only equals
-        transferRequest = TransferRequest.builder().recipientId(1234L).build();
+        transferRequest = TransferRequest.builder().
+                userId(10L).
+                recipientId(1234L).
+                currency(currency).
+                amount(new BigDecimal(1000)).
+                build();
+
         BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(transferRequest);
+
+        assertNotNull(owner.getId());
         assertEquals(transferRequest.getRecipientId(), owner.getId());
+
+        assertNotNull(owner.getUserId());
         assertEquals(transferRequest.getUserId(), owner.getUserId());
+
         assertNull(owner.getBankAccount());
         assertNull(owner.getIdNumber());
         assertNull(owner.getFirstName());
         assertNull(owner.getLastName());
+        assertNull(owner.getCreatedAt());
     }
 
     @Test
@@ -73,6 +83,7 @@ public class TransferMapperTest {
 
     @Test
     public void testTransactionToTransferResponse_withdraw() {
+        // TODO assert not null, not only equals
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
@@ -169,16 +180,15 @@ public class TransferMapperTest {
     }
 
     private void testBankAccountOwnerFromTransferRequest_withRecipient(boolean withCurrency) {
-        // TODO assert not null, not only equals
-        TransferAccount.TransferAccountBuilder builder = TransferAccount.builder().
+        TransferAccount.TransferAccountBuilder accountBuilder = TransferAccount.builder().
                 routingNumber("0123456789").
                 accountNumber("012345678");
 
         if (withCurrency) {
-            builder.currency(currency);
+            accountBuilder.currency(currency);
         }
 
-        TransferAccount account = builder.build();
+        TransferAccount account = accountBuilder.build();
 
         TransferRecipient recipient = TransferRecipient.builder().
                 account(account).
@@ -187,25 +197,49 @@ public class TransferMapperTest {
                 lastName("Snow").
                 build();
 
-        transferRequest = TransferRequest.builder().
+        TransferRequest.TransferRequestBuilder transferBuilder = TransferRequest.builder().
+                userId(userId).
                 recipient(recipient).
-                build();
+                amount(new BigDecimal(1000));
+
+       if (withCurrency) {
+           transferBuilder.currency(currency);
+       }
+
+        transferRequest = transferBuilder.build();
 
         BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(transferRequest);
+
         assertNull(owner.getId());
+
+        assertNotNull(owner.getUserId());
         assertEquals(owner.getUserId(), transferRequest.getUserId());
-        assertEquals(owner.getBankAccount().getAccount(), transferRequest.getRecipient().getAccount().getAccountNumber());
+
+        assertNotNull(owner.getBankAccount());
+
+        assertNotNull(owner.getBankAccount().getRouting());
         assertEquals(owner.getBankAccount().getRouting(), transferRequest.getRecipient().getAccount().getRoutingNumber());
 
+        assertNotNull(owner.getBankAccount().getAccount());
+        assertEquals(owner.getBankAccount().getAccount(), transferRequest.getRecipient().getAccount().getAccountNumber());
+
+        assertNotNull(owner.getBankAccount().getCurrency());
         if (withCurrency) {
             assertEquals(owner.getBankAccount().getCurrency(), transferRequest.getRecipient().getAccount().getCurrency());
         } else {
             assertEquals(owner.getBankAccount().getCurrency(), currency);
         }
 
+        assertNotNull(owner.getIdNumber());
         assertEquals(owner.getIdNumber(), transferRequest.getRecipient().getIdNumber());
+
+        assertNotNull(owner.getFirstName());
         assertEquals(owner.getFirstName(), transferRequest.getRecipient().getFirstName());
+
+        assertNotNull(owner.getLastName());
         assertEquals(owner.getLastName(), transferRequest.getRecipient().getLastName());
+
+        assertNull(owner.getCreatedAt());
     }
 
     public void testTransferResponse(Operation operation) {
