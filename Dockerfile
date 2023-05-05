@@ -10,7 +10,7 @@ FROM openjdk:17-alpine
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/ontop.jar ontop.jar
-COPY --from=builder /app/src/main/resources ./
+COPY --from=builder /app/src/main/resources/application.properties application.properties
 
 # Set the command to run the Spring Boot application
 CMD ["java", "-jar", "ontop.jar"]
