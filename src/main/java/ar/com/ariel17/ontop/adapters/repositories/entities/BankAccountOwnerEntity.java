@@ -21,7 +21,7 @@ public class BankAccountOwnerEntity {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(nullable = false, length = 10)
     private String routing;
