@@ -40,7 +40,12 @@ public class TransferMapperTest {
 
         account1 = new BankAccount("0123456789", "012345678", currency);
         account2 = new BankAccount("9876543210", "876543210", currency);
-        Payment payment = Payment.builder().id(UUID.randomUUID()).build();
+        Payment payment = Payment.builder().
+                id(UUID.randomUUID()).
+                status("error").
+                error("Error description").
+                createdAt(new Date()).
+                build();
 
         transaction = new Transaction();
         transaction.setWalletTransactionId(1234L);
@@ -83,7 +88,6 @@ public class TransferMapperTest {
 
     @Test
     public void testTransactionToTransferResponse_withdraw() {
-        // TODO assert not null, not only equals
         transaction.addMovement(Movement.builder().
                 id(111L).
                 userId(userId).
@@ -243,21 +247,49 @@ public class TransferMapperTest {
     }
 
     public void testTransferResponse(Operation operation) {
-        // TODO assert not null, not only equals
         TransferResponse response = mapper.transactionToTransferResponse(userId, transaction);
+
+        assertNotNull(response.getUserId());
         assertEquals(response.getUserId(), userId);
+
+        assertNotNull(response.getStatus());
         assertEquals(response.getStatus(), transaction.getPayment().getStatus());
+
+        assertNotNull(response.getOperation());
         assertEquals(response.getOperation(), operation);
+
         assertEquals(response.getMovements().size(), transaction.getMovements().size());
 
         for (int i = 0; i < response.getMovements().size(); i++) {
             TransferMovement m1 = response.getMovements().get(i);
             Movement m2 = transaction.getMovements().get(i);
+
+            assertNotNull(m1.getId());
+            assertNotNull(m2.getId());
             assertEquals(m1.getId(), m2.getId());
+
+            assertNotNull(m1.getType());
+            assertNotNull(m2.getType());
             assertEquals(m1.getType(), m2.getType());
+
+            assertNotNull(m1.getOperation());
+            assertNotNull(m2.getOperation());
             assertEquals(m1.getOperation(), m2.getOperation());
+
+            assertNotNull(m1.getCurrency());
+            assertNotNull(m2.getCurrency());
             assertEquals(m1.getCurrency(), m2.getCurrency());
+
+            assertNotNull(m1.getAmount());
+            assertNotNull(m2.getAmount());
             assertEquals(m1.getAmount(), m2.getAmount());
+
+            // TODO need this
+            // assertNotNull(m1.getRecipientId());
+            // assertNotNull(m2.getTo());
+
+            assertNotNull(m1.getCreatedAt());
+            assertNotNull(m2.getCreatedAt());
             assertEquals(m1.getCreatedAt(), m2.getCreatedAt());
         }
     }
