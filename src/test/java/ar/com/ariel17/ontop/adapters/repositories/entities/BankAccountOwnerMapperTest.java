@@ -4,7 +4,6 @@ import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Currency;
 import java.util.Date;
@@ -17,7 +16,7 @@ public class BankAccountOwnerMapperTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount account = new BankAccount(1000L, 2000L, Currency.getInstance("USD"));
+        BankAccount account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
         owner = new BankAccountOwner(10L, 99L, account, "123ABC", "John", "Doe", new Date());
     }
 

@@ -33,8 +33,8 @@ public class MovementRepositoryImplTest {
 
         Currency currency = Currency.getInstance("USD");
         BigDecimal amount = new BigDecimal("1000");
-        BankAccount from = new BankAccount(1234L, 1234L, currency);
-        BankAccount to = new BankAccount(4321L, 4321L, currency);
+        BankAccount from = new BankAccount("0123456789", "012345678", currency);
+        BankAccount to = new BankAccount("9876543210", "876543210", currency);
         movement = new Movement(null, 1234L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, from, to, 500L, UUID.randomUUID(), null);
 
         transaction = new Transaction();

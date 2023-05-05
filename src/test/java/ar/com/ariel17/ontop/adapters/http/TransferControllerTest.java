@@ -51,8 +51,8 @@ public class TransferControllerTest {
 
         userId = 10L;
 
-        BankAccount account1 = new BankAccount(1234L, 1234L, currency);
-        BankAccount account2 = new BankAccount(4321L, 4321L, currency);
+        BankAccount account1 = new BankAccount("0123456789", "012345678", currency);
+        BankAccount account2 = new BankAccount("9876543210", "876543210", currency);
         Payment payment = Payment.builder().
                 id(UUID.randomUUID()).
                 status("processing").
@@ -103,8 +103,8 @@ public class TransferControllerTest {
     @Test
     public void testCreateTransfer_okRecipient() throws UserNotFoundException, TransactionException, BankAccountOwnerNotFoundException {
         TransferAccount account = TransferAccount.builder().
-                routingNumber(1234L).
-                accountNumber(1234L).
+                routingNumber("0123456789").
+                accountNumber("012345678").
                 currency(currency).
                 build();
 

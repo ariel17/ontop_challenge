@@ -35,8 +35,8 @@ public class BankAccountOwnerRepositoryImplTest {
         ownerId = 1000L;
 
         BankAccount account = BankAccount.builder().
-                routing(4321L).
-                account(4321L).
+                routing("0123456789").
+                account("012345678").
                 currency(Currency.getInstance("USD")).
                 build();
         owner = BankAccountOwner.builder().

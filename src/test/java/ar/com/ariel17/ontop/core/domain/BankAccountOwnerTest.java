@@ -2,7 +2,6 @@ package ar.com.ariel17.ontop.core.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Currency;
 
@@ -15,7 +14,7 @@ public class BankAccountOwnerTest {
 
     @BeforeEach
     public void setUp() {
-        account = new BankAccount(1234L, 1234L, Currency.getInstance("USD"));
+        account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
     }
 
     @Test

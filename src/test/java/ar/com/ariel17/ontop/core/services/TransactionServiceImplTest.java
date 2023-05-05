@@ -58,7 +58,7 @@ public class TransactionServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount account = new BankAccount(1234L, 1234L, Currency.getInstance("USD"));
+        BankAccount account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
         sourceOwner = new BankAccountOwner(null, 0L, account, "", "ON TOP INC", "", null);
 
         BigDecimal feePercent = new BigDecimal("0.1");
@@ -68,7 +68,7 @@ public class TransactionServiceImplTest {
 
         userId = 10L;
 
-        account = new BankAccount(1234L, 1234L, Currency.getInstance("USD"));
+        account = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
         recipient = new BankAccountOwner(null, userId, account, "1234", "John", "Doe", null);
         amount = new BigDecimal(1000);
     }

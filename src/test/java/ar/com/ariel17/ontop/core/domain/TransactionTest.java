@@ -2,7 +2,6 @@ package ar.com.ariel17.ontop.core.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -27,8 +26,8 @@ public class TransactionTest {
     public void setUp() {
         Currency currency = Currency.getInstance("USD");
         BigDecimal amount = new BigDecimal(1234);
-        BankAccount account1 = new BankAccount(1234L, 1234L, currency);
-        BankAccount account2 = new BankAccount(4321L, 4321L, currency);
+        BankAccount account1 = new BankAccount("0123456789", "012345678", currency);
+        BankAccount account2 = new BankAccount("9876543210", "876543210", currency);
 
         m1 = new Movement(null, 4321L, Type.TRANSFER, Operation.WITHDRAW, currency, amount, account1, account2, null, null, null);
         m2 = new Movement(null, 4321L, Type.FEE, Operation.WITHDRAW, currency, amount, null, null, null, null, null);

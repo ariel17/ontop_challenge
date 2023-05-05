@@ -38,17 +38,17 @@ public class MovementEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "from_routing")
-    private Long fromRouting;
+    @Column(name = "from_routing", length = 10)
+    private String fromRouting;
 
-    @Column(name = "from_account")
-    private Long fromAccount;
+    @Column(name = "from_account", length = 10)
+    private String fromAccount;
 
-    @Column(name = "to_routing")
-    private Long toRouting;
+    @Column(name = "to_routing", length = 10)
+    private String toRouting;
 
-    @Column(name = "to_account")
-    private Long toAccount;
+    @Column(name = "to_account", length = 10)
+    private String toAccount;
 
     @Column(name = "wallet_transaction_id", nullable = false)
     private Long walletTransactionId;

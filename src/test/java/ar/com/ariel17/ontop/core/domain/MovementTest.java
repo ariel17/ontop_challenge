@@ -2,7 +2,6 @@ package ar.com.ariel17.ontop.core.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -28,8 +27,8 @@ public class MovementTest {
     public void setUp() {
         currency = Currency.getInstance("USD");
         amount = new BigDecimal(1234);
-        account1 = new BankAccount(1234L, 1234L, currency);
-        account2 = new BankAccount(4321L, 4321L, currency);
+        account1 = new BankAccount("0123456789", "012345678", currency);
+        account2 = new BankAccount("9876543210", "876543210", currency);
         walletTransactionId = 1234L;
         paymentId = UUID.randomUUID();
     }

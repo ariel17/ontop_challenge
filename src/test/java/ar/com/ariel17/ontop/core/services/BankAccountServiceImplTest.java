@@ -35,8 +35,8 @@ public class BankAccountServiceImplTest {
     public void setUp() {
         ownerId = 1234L;
         BankAccount account = BankAccount.builder().
-                account(1234L).
-                routing(1234L).
+                account("0123456789").
+                routing("012345678").
                 currency(Currency.getInstance("USD")).
                 build();
         owner = BankAccountOwner.builder().

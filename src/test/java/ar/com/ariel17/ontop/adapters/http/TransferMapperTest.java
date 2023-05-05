@@ -8,7 +8,6 @@ import ar.com.ariel17.ontop.adapters.http.entities.responses.TransferResponse;
 import ar.com.ariel17.ontop.core.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -40,8 +39,8 @@ public class TransferMapperTest {
         mapper = new TransferMapper(currency);
         userId = 10L;
 
-        account1 = new BankAccount(1234L, 1234L, currency);
-        account2 = new BankAccount(4321L, 4321L, currency);
+        account1 = new BankAccount("0123456789", "012345678", currency);
+        account2 = new BankAccount("9876543210", "876543210", currency);
         Payment payment = Payment.builder().id(UUID.randomUUID()).build();
 
         transaction = new Transaction();
@@ -172,8 +171,8 @@ public class TransferMapperTest {
     private void testBankAccountOwnerFromTransferRequest_withRecipient(boolean withCurrency) {
         // TODO assert not null, not only equals
         TransferAccount.TransferAccountBuilder builder = TransferAccount.builder().
-                routingNumber(1234L).
-                accountNumber(1234L);
+                routingNumber("0123456789").
+                accountNumber("012345678");
 
         if (withCurrency) {
             builder.currency(currency);

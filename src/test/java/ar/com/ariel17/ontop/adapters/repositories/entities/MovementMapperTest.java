@@ -6,7 +6,6 @@ import ar.com.ariel17.ontop.core.domain.Operation;
 import ar.com.ariel17.ontop.core.domain.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -19,8 +18,8 @@ public class MovementMapperTest {
 
     @BeforeEach
     public void setUp() {
-        BankAccount from = new BankAccount(1111L, 1111L, Currency.getInstance("USD"));
-        BankAccount to = new BankAccount(2222L, 2222L, Currency.getInstance("USD"));
+        BankAccount from = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
+        BankAccount to = new BankAccount("9876543210", "876543210", Currency.getInstance("USD"));
         movement = new Movement(10L, 99L, Type.TRANSFER, Operation.WITHDRAW, Currency.getInstance("USD"), new BigDecimal("-100.01"), from, to, 5000L, UUID.randomUUID(), new Date());
     }
 

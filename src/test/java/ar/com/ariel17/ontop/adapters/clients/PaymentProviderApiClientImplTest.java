@@ -88,11 +88,11 @@ public class PaymentProviderApiClientImplTest {
                     }
                 }""";
 
-        BankAccount account1 = new BankAccount(1111L, 1111L, Currency.getInstance("USD"));
-        BankAccount account2 = new BankAccount(2222L, 2222L, Currency.getInstance("USD"));
+        BankAccount account1 = new BankAccount("0123456789", "012345678", Currency.getInstance("USD"));
+        BankAccount account2 = new BankAccount("9876543210", "876543210", Currency.getInstance("USD"));
         from = new BankAccountOwner(1L, 99L, account1, "123ABC", "John", "Doe", new Date());
         to = new BankAccountOwner(2L, 100L, account2, "ABC123", "John", "Snow", new Date());
-        requestBody = "{\"source\":{\"type\":\"COMPANY\",\"sourceInformation\":{\"name\":\"John Doe\"},\"account\":{\"accountNumber\":\"1111\",\"currency\":\"USD\",\"routingNumber\":\"1111\"}},\"destination\":{\"name\":\"John Snow\",\"account\":{\"accountNumber\":\"2222\",\"currency\":\"USD\",\"routingNumber\":\"2222\"}},\"amount\":2500}";
+        requestBody = "{\"source\":{\"type\":\"COMPANY\",\"sourceInformation\":{\"name\":\"John Doe\"},\"account\":{\"accountNumber\":\"012345678\",\"currency\":\"USD\",\"routingNumber\":\"0123456789\"}},\"destination\":{\"name\":\"John Snow\",\"account\":{\"accountNumber\":\"876543210\",\"currency\":\"USD\",\"routingNumber\":\"9876543210\"}},\"amount\":2500}";
         amount = new BigDecimal(2500);
     }
 
