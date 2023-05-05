@@ -77,18 +77,22 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new TransactionException(message);
             }
 
+            BigDecimal balance = walletAPIClient.getBalance(userId);
+            logger.info("Wallet balance for user_id={}: {}", userId, balance);
+
             // |total| to compare balance
-            if (walletAPIClient.getBalance(userId).compareTo(total.abs()) == INSUFFICIENT_BALANCE) {
-                logger.info("Transaction not completed due to insufficient balance: user_id={}", userId);
-                throw new TransactionException("Balance is insufficient to complete transaction");
+            if (balance.compareTo(total.abs()) == INSUFFICIENT_BALANCE) {
+                logger.info("Transaction not completed due to insufficient balance: user_id={}, balance={}, total={}", userId, balance, total.abs());
+                throw new InsufficientBalanceException("Balance is insufficient to complete transaction");
             }
 
             // NEGATIVE (as is) to subtract from balance
             walletTransactionId = walletAPIClient.createTransaction(userId, total);
-            logger.info("Withdraw from wallet OK: user_id={}, transaction_id={}", userId, walletTransactionId);
+            logger.info("Withdraw from wallet OK: user_id={}, total={}, transaction_id={}", userId, total, walletTransactionId);
 
             transaction.setWalletTransactionId(walletTransactionId);
 
+            logger.info("Requesting transfer between accounts to provider: user_id={}, amount={}", userId, amount);
             Payment payment = null;
             try {
                 // amount is POSITIVE
@@ -99,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
 
                 // |total| to restore balance
                 Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total.abs());
-                logger.info("Withdraw from wallet REVERTED: user_id={}, transaction_id={}", userId, revertWalletTransactionId);
+                logger.info("Withdraw from wallet REVERTED: user_id={}, total={}, transaction_id={}", userId, total.abs(), revertWalletTransactionId);
 
                 transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
                 return movementRepository.save(transaction);
@@ -108,11 +112,12 @@ public class TransactionServiceImpl implements TransactionService {
                 payment = paymentRepository.save(payment);
             }
 
-            logger.info("Transfer from provider completed: user_id={}, payment_id={}, payment_status={}", userId, payment.getId(), payment.getStatus());
+            logger.info("Transfer from provider completed: user_id={}, payment={}", userId, payment);
 
             if (payment.isError()) {
-                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total);
-                logger.info("Withdraw from wallet REVERTED: user_id={}, transaction_id={}", userId, revertWalletTransactionId);
+                // |total| to restore balance
+                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total.abs());
+                logger.info("Withdraw from wallet REVERTED: user_id={}, total={}, transaction_id={}", userId, total.abs(), revertWalletTransactionId);
 
                 transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
             }

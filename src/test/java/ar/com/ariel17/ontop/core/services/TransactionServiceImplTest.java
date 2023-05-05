@@ -32,9 +32,7 @@ public class TransactionServiceImplTest {
     @Mock
     private BankAccountRepository bankAccountRepository;
 
-    private BankAccountOwner sourceOwner;
-
-    private TransactionFactory transactionFactory;
+    private BankAccountOwner onTopAccount;
 
     @Mock
     private WalletApiClient walletAPIClient;
@@ -67,12 +65,13 @@ public class TransactionServiceImplTest {
                 account("012345678").
                 type(BankAccountType.COMPANY).
                 currency(currency).build();
-        sourceOwner = new BankAccountOwner(null, 0L, account, "", "ON TOP INC", "", null);
+        onTopAccount = BankAccountOwner.builder().
+                userId(0L).bankAccount(account).firstName("ONTOP INC").build();
 
         BigDecimal feePercent = new BigDecimal("0.1");
-        transactionFactory = new TransactionFactory(feePercent);
+        TransactionFactory transactionFactory = new TransactionFactory(feePercent);
 
-        service = new TransactionServiceImpl(context, bankAccountRepository, sourceOwner, transactionFactory, walletAPIClient, paymentProviderAPIClient, paymentRepository, movementRepository);
+        service = new TransactionServiceImpl(context, bankAccountRepository, onTopAccount, transactionFactory, walletAPIClient, paymentProviderAPIClient, paymentRepository, movementRepository);
 
         userId = 10L;
 
@@ -87,6 +86,7 @@ public class TransactionServiceImplTest {
                 idNumber("123ABC").
                 firstName("John").
                 lastName("Snow").build();
+
         amount = new BigDecimal(1000);
     }
 
@@ -102,8 +102,10 @@ public class TransactionServiceImplTest {
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         UUID paymentId = UUID.randomUUID();
-        Payment paymentResponse = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
-        when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(paymentResponse);
+        Payment payment = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
+        when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(payment);
+
+        when(paymentRepository.save(eq(payment))).thenAnswer(i -> i.getArguments()[0]);
 
         when(movementRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArguments()[0]);
 
@@ -115,7 +117,7 @@ public class TransactionServiceImplTest {
 
         transaction.getMovements().forEach(m -> {
             assertEquals(m.getWalletTransactionId(), walletTransactionId);
-            assertEquals(paymentResponse, m.getPayment());
+            assertEquals(payment, m.getPayment());
         });
     }
 
@@ -144,7 +146,7 @@ public class TransactionServiceImplTest {
         when(lockRepository.acquire()).thenReturn(true);
         when(walletAPIClient.getBalance(eq(userId))).thenReturn(new BigDecimal(200));
 
-        assertThrows(TransactionException.class, () -> service.transfer(userId, recipient, amount));
+        assertThrows(InsufficientBalanceException.class, () -> service.transfer(userId, recipient, amount));
 
         verify(lockRepository, times(1)).close();
     }
@@ -215,7 +217,7 @@ public class TransactionServiceImplTest {
         Long walletTransactionId = 555L;
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
-        doThrow(new PaymentProviderApiException("mocked error")).when(paymentProviderAPIClient).createPayment(eq(sourceOwner), eq(recipient), eq(amount));
+        doThrow(new PaymentProviderApiException("mocked error")).when(paymentProviderAPIClient).createPayment(eq(onTopAccount), eq(recipient), eq(amount));
         Transaction transaction = service.transfer(userId, recipient, amount);
 
         assertEquals(4, transaction.getMovements().size());
@@ -244,7 +246,9 @@ public class TransactionServiceImplTest {
 
         UUID paymentId = UUID.randomUUID();
         Payment response = new Payment(paymentId, new BigDecimal(3999), "error", "error", null);
-        when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
+        when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(response);
+
+        when(paymentRepository.save(eq(response))).thenAnswer(i -> i.getArguments()[0]);
 
         Transaction transaction = service.transfer(userId, recipient, amount);
 
@@ -271,7 +275,7 @@ public class TransactionServiceImplTest {
         Long walletTransactionId = 555L;
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
-        doThrow(new PaymentProviderApiException("mocked provider error")).when(paymentProviderAPIClient).createPayment(eq(sourceOwner), eq(recipient), eq(amount));
+        doThrow(new PaymentProviderApiException("mocked provider error")).when(paymentProviderAPIClient).createPayment(eq(onTopAccount), eq(recipient), eq(amount));
 
         doThrow(new WalletApiException("mocked wallet exception")).when(walletAPIClient).createTransaction(eq(userId), eq(total.negate()));
 
@@ -296,7 +300,9 @@ public class TransactionServiceImplTest {
 
         UUID paymentId = UUID.randomUUID();
         Payment response = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
-        when(paymentProviderAPIClient.createPayment(eq(sourceOwner), eq(recipient), eq(amount))).thenReturn(response);
+        when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(response);
+
+        when(paymentRepository.save(eq(response))).thenAnswer(i -> i.getArguments()[0]);
 
         Mockito.doThrow(new RuntimeException("mocked exception")).when(movementRepository).save(any(Transaction.class));
 

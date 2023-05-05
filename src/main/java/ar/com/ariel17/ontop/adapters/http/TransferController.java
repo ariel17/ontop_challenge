@@ -6,6 +6,7 @@ import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Transaction;
 import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
+import ar.com.ariel17.ontop.core.services.InsufficientBalanceException;
 import ar.com.ariel17.ontop.core.services.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,12 @@ public class TransferController {
         }
 
         BankAccountOwner owner = mapper.bankAccountOwnerFromTransferRequest(request);
-        Transaction transaction = null;
+        Transaction transaction;
         try {
             transaction = service.transfer(request.getUserId(), owner, request.getAmount());
+
+        } catch (InsufficientBalanceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(), e);
 
         } catch (UserNotFoundException | BankAccountOwnerNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.toString(), e);
@@ -47,6 +51,7 @@ public class TransferController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString(), e);
         }
+
         return mapper.transactionToTransferResponse(request.getUserId(), transaction);
     }
 }
