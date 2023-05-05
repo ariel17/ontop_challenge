@@ -2,14 +2,38 @@
 services:
   api:
     build: .
+    environment:
+      ONTOP_ROUTING: '028444018'
+      ONTOP_ACCOUNT: '0245253419'
+      ONTOP_NAME: ONTOP INC
+      # TRANSACTIONS_FEE_PERCENT: 0.1
+      PAYMENT_PROVIDER_HOST: http://mockoon.tools.getontop.com:3000
+      WALLET_HOST: http://mockoon.tools.getontop.com:3000
+      REDIS_HOST: redis
+      DATABASE_HOST: db
+      DATABASE_USERNAME: ontop
+      DATABASE_PASSWORD: ariel17
     depends_on:
       - redis
+      - db
     ports:
       - "8090:8090"
     links:
       - "redis"
+      - "db"
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: ontop
+      MYSQL_USER: ontop
+      MYSQL_PASSWORD: ariel17
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+    ports:
+      - "3306:3306"
+
