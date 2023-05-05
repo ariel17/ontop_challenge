@@ -2,12 +2,11 @@ package ar.com.ariel17.ontop.adapters.http;
 
 import ar.com.ariel17.ontop.adapters.http.entities.requests.TransferRequest;
 import ar.com.ariel17.ontop.adapters.http.entities.responses.TransferResponse;
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Transaction;
 import ar.com.ariel17.ontop.core.repositories.BankAccountOwnerNotFoundException;
-import ar.com.ariel17.ontop.core.services.TransactionException;
 import ar.com.ariel17.ontop.core.services.TransactionService;
-import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class TransferController {
         mapper = new TransferMapper(defaultCurrency);
     }
 
-    @PostMapping("/transfer")
+    @PostMapping("/transfers")
     public TransferResponse createTransfer(@Valid @RequestBody TransferRequest request) {
         if (request.getRecipientId() != null && request.getRecipient() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Use recipient_id or recipient, not both");
