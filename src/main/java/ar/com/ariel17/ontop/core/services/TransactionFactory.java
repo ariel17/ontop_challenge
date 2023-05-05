@@ -68,6 +68,7 @@ public class TransactionFactory {
         List<Movement> newMovements = new ArrayList<>();
         transaction.getMovements().stream().filter(m -> m.getOperation() == operation).forEach(m -> {
             newMovements.add(Movement.builder().
+                    userId(m.getUserId()).
                     type(m.getType()).
                     operation(Operation.REVERT).
                     currency(m.getCurrency()).
