@@ -30,9 +30,9 @@ public class Movement {
 
     private BigDecimal amount;
 
-    private BankAccount from;
+    private BankAccountOwner onTopAccount;
 
-    private BankAccount to;
+    private BankAccountOwner externalAccount;
 
     private Long walletTransactionId;
 

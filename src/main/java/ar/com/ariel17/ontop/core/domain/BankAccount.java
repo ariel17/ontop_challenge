@@ -19,4 +19,6 @@ public class BankAccount {
     private String account;
 
     private Currency currency;
+
+    private String type;
 }

@@ -33,6 +33,9 @@ public class BankAccountOwnerEntity {
     @Column(nullable = false, length = 10)
     private String account;
 
+    @Column(length = 20)
+    private String type;
+
     @Column(nullable = false, length = 3)
     private Currency currency;
 

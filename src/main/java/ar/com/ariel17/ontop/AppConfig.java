@@ -39,6 +39,12 @@ public class AppConfig implements ApplicationContextAware {
     @Value("${on_top.currency}")
     private String onTopCurrencyCode;
 
+    @Value("${on_top.user_id}")
+    private Long onTopUserId;
+
+    @Value("${on_top.account_type}")
+    private String onTopAccountType;
+
     @Value("${on_top.name}")
     private String onTopName;
 
