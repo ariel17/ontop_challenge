@@ -26,10 +26,10 @@ public class PaymentEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 15)
     private String status;
 
-    @Column(length = 10)
+    @Column(length = 30)
     private String error;
 
     @Column(name = "created_at", insertable = false)
