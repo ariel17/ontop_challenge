@@ -59,11 +59,14 @@ public class TransactionServiceImpl implements TransactionService {
             }
 
         } else {
-            recipient = bankAccountRepository.getById(recipient.getId());
+            recipient = bankAccountRepository.getByIdAndUserId(recipient.getId(), userId);
             logger.info("Bank account fetched: user_id={}, owner_id={}", userId, recipient.getId());
         }
 
-        Transaction transaction = transactionFactory.createWithdraw(userId, onTopAccount, recipient, amount);
+        // -amount because it is a withdrawal
+        Transaction transaction = transactionFactory.createWithdraw(userId, onTopAccount, recipient, amount.negate());
+
+        // total is NEGATIVE
         BigDecimal total = transaction.total();
         Long walletTransactionId = null;
 
@@ -74,31 +77,35 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new TransactionException(message);
             }
 
-            if (walletAPIClient.getBalance(userId).compareTo(total) == INSUFFICIENT_BALANCE) {
+            // |total| to compare balance
+            if (walletAPIClient.getBalance(userId).compareTo(total.abs()) == INSUFFICIENT_BALANCE) {
                 logger.info("Transaction not completed due to insufficient balance: user_id={}", userId);
                 throw new TransactionException("Balance is insufficient to complete transaction");
             }
 
-            walletTransactionId = walletAPIClient.createTransaction(userId, total.negate());
+            // NEGATIVE (as is) to subtract from balance
+            walletTransactionId = walletAPIClient.createTransaction(userId, total);
             logger.info("Withdraw from wallet OK: user_id={}, transaction_id={}", userId, walletTransactionId);
 
             transaction.setWalletTransactionId(walletTransactionId);
 
             Payment payment = null;
             try {
+                // amount is POSITIVE
                 payment = paymentProviderAPIClient.createPayment(onTopAccount, recipient, amount);
 
             } catch (PaymentProviderApiException e) {
                 logger.error("Transfer from provider FAILED: user_id={}", userId, e);
 
-                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total);
+                // |total| to restore balance
+                Long revertWalletTransactionId = walletAPIClient.createTransaction(userId, total.abs());
                 logger.info("Withdraw from wallet REVERTED: user_id={}, transaction_id={}", userId, revertWalletTransactionId);
 
                 transactionFactory.revertOperation(transaction, Operation.WITHDRAW, revertWalletTransactionId);
                 return movementRepository.save(transaction);
 
             } finally {
-                paymentRepository.save(payment);
+                payment = paymentRepository.save(payment);
             }
 
             logger.info("Transfer from provider completed: user_id={}, payment_id={}, payment_status={}", userId, payment.getId(), payment.getStatus());
