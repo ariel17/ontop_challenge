@@ -35,6 +35,7 @@ public class TransactionFactory {
         }
 
         Transaction transaction = new Transaction();
+        transaction.setExternalAccount(externalAccount);
         Date now = new Date();
 
         transaction.addMovement(Movement.builder().
@@ -54,6 +55,8 @@ public class TransactionFactory {
                 operation(Operation.WITHDRAW).
                 currency(currency).
                 amount(amount.multiply(feePercent)).
+                onTopAccount(onTopAccount).
+                externalAccount(externalAccount).
                 createdAt(now).
                 build());
 
