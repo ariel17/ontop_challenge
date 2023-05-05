@@ -130,7 +130,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         } catch (Exception e) {
             logger.error("Unexpected exception", e);
-            throw new TransactionException("Unexpected exception", e);
+            throw new TransactionException(e);
         }
 
         return transaction;
