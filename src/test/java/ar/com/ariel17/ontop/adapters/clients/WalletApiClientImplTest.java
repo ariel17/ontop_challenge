@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -73,9 +75,8 @@ public class WalletApiClientImplTest {
     @Test
     public void testGetBalance_error4xx() {
         String uri = client.getBalanceUri(userId);
-        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.NOT_FOUND);
-        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
-                .thenReturn(response);
+        doThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, bodyError)).
+                when(restTemplate).exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class));
 
         assertThrows(UserNotFoundException.class, () -> client.getBalance(userId));
     }
@@ -83,9 +84,8 @@ public class WalletApiClientImplTest {
     @Test
     public void testGetBalance_error5xx() {
         String uri = client.getBalanceUri(userId);
-        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.INTERNAL_SERVER_ERROR);
-        when(restTemplate.exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class)))
-                .thenReturn(response);
+        doThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, bodyError)).
+                when(restTemplate).exchange(eq(uri), eq(HttpMethod.GET), any(), eq(String.class));
 
         assertThrows(WalletApiException.class, () -> client.getBalance(userId));
     }
@@ -121,18 +121,16 @@ public class WalletApiClientImplTest {
 
     @Test
     public void testCreateTransaction_error5xx() {
-        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.INTERNAL_SERVER_ERROR);
-        when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
-                .thenReturn(response);
+        doThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, bodyError)).
+                when(restTemplate).exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class));
 
         assertThrows(WalletApiException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
     }
 
     @Test
     public void testCreateTransaction_error4xx() {
-        ResponseEntity<String> response = new ResponseEntity<>(bodyError, HttpStatus.NOT_FOUND);
-        when(restTemplate.exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class)))
-                .thenReturn(response);
+        doThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, bodyError)).
+                when(restTemplate).exchange(eq(WalletApiClientImpl.TRANSACTIONS_URI), eq(HttpMethod.POST), any(), eq(String.class));
 
         assertThrows(UserNotFoundException.class, () -> client.createTransaction(userId, new BigDecimal(2000)));
     }
