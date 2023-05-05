@@ -31,10 +31,10 @@ public class AppConfig implements ApplicationContextAware {
     private ApplicationContext context;
 
     @Value("${on_top.routing}")
-    private Long onTopRoutingNumber;
+    private String onTopRoutingNumber;
 
     @Value("${on_top.account}")
-    private Long onTopAccountNumber;
+    private String onTopAccountNumber;
 
     @Value("${on_top.currency}")
     private String onTopCurrencyCode;
