@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -37,21 +38,22 @@ public class MovementEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "ontop_account_id", referencedColumnName = "id")
     private BankAccountOwnerEntity onTopAccount;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "external_account_id", referencedColumnName = "id")
     private BankAccountOwnerEntity externalAccount;
 
     @Column(name = "wallet_transaction_id", nullable = false)
     private Long walletTransactionId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private PaymentEntity payment;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", insertable = false)
+    @CreationTimestamp
     private Date createdAt;
 }

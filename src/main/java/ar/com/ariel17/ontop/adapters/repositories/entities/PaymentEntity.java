@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -31,6 +32,7 @@ public class PaymentEntity {
     @Column(length = 10)
     private String error;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", insertable = false)
+    @CreationTimestamp
     private Date createdAt;
 }
