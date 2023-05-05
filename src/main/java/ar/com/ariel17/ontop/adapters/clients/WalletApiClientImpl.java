@@ -3,18 +3,18 @@ package ar.com.ariel17.ontop.adapters.clients;
 import ar.com.ariel17.ontop.adapters.clients.entities.requests.WalletTransactionRequest;
 import ar.com.ariel17.ontop.adapters.clients.entities.responses.WalletBalanceResponse;
 import ar.com.ariel17.ontop.adapters.clients.entities.responses.WalletTransactionResponse;
+import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import ar.com.ariel17.ontop.core.clients.WalletApiClient;
 import ar.com.ariel17.ontop.core.clients.WalletApiException;
-import ar.com.ariel17.ontop.core.clients.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 @Component
@@ -35,20 +35,21 @@ public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
         ResponseEntity<String> response;
         try {
             response = this.get(getBalanceUri(userId));
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                throw new WalletApiException("Invalid request to Wallet API", e);
+            }
+            if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                throw new UserNotFoundException(String.format("User ID=%d not found", userId));
+            }
+            throw new WalletApiException(e);
+
         } catch (Exception e) {
             throw new WalletApiException(e);
         }
 
-        HttpStatusCode statusCode = response.getStatusCode();
-        if (statusCode.is4xxClientError()) {
-            throw new UserNotFoundException(String.format("User ID=%d not found", userId));
-        }
-
         String body = response.getBody();
-        if (statusCode.is5xxServerError()) {
-            throw new WalletApiException(String.format("Wallet API error: status_code=%d, body=%s", statusCode.value(), body));
-        }
-
         WalletBalanceResponse balance;
         try {
             balance = mapper.readValue(body, WalletBalanceResponse.class);
@@ -73,24 +74,27 @@ public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
         ResponseEntity<String> response;
         try {
             response = post(TRANSACTIONS_URI, requestBody);
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                throw new WalletApiException("Invalid request to Wallet API", e);
+            }
+
+            if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                throw new UserNotFoundException(String.format("User ID=%d not found", userId));
+            }
+
+            throw new WalletApiException(e);
+
         } catch (Exception e) {
             throw new WalletApiException(e);
         }
 
-        HttpStatusCode statusCode = response.getStatusCode();
-        if (statusCode.is4xxClientError()) {
-            throw new UserNotFoundException(String.format("User ID=%d not found", userId));
-        }
-
         String responseBody = response.getBody();
-        if (statusCode.is5xxServerError()) {
-            String message = String.format("Wallet API error: status_code=%d, body=%s", statusCode.value(), responseBody);
-            throw new WalletApiException(message);
-        }
-
         WalletTransactionResponse transactionResponse;
         try {
             transactionResponse = mapper.readValue(responseBody, WalletTransactionResponse.class);
+
         } catch (JsonProcessingException e) {
             throw new WalletApiException(e);
         }

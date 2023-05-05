@@ -8,10 +8,13 @@ import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
 import ar.com.ariel17.ontop.core.domain.Payment;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -19,6 +22,7 @@ import java.math.BigDecimal;
 @Component
 public class PaymentProviderApiClientImpl extends ApiClient implements PaymentProviderApiClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentProviderApiClientImpl.class);
     protected static final String PAYMENT_URI = "/api/v1/payments";
 
     private PaymentProviderMapper providerMapper;
@@ -36,6 +40,7 @@ public class PaymentProviderApiClientImpl extends ApiClient implements PaymentPr
         String requestBody;
         try {
             requestBody = mapper.writeValueAsString(request);
+
         } catch (JsonProcessingException e) {
             throw new PaymentProviderApiException(e);
         }
@@ -43,20 +48,32 @@ public class PaymentProviderApiClientImpl extends ApiClient implements PaymentPr
         ResponseEntity<String> response;
         try {
             response = post(PAYMENT_URI, requestBody);
+
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            if (e.getStatusCode().is4xxClientError()) {
+                throw new PaymentProviderApiException("Invalid request to provider API", e);
+            }
+
+            if (e.getStatusCode().is5xxServerError()) {
+                return parseBody(e.getResponseBodyAsString());
+            }
+
+            throw new PaymentProviderApiException(e);
+
         } catch (Exception e) {
             throw new PaymentProviderApiException(e);
         }
 
-        HttpStatusCode statusCode = response.getStatusCode();
-        if (statusCode.is4xxClientError()) {
-            throw new PaymentProviderApiException("Payment provider API error");
-        }
+        return parseBody(response.getBody());
+    }
 
-        String responseBody = response.getBody();
+    private Payment parseBody(String responseBody) throws PaymentProviderApiException {
         PaymentProviderResponse responseEntity;
         try {
             responseEntity = mapper.readValue(responseBody, PaymentProviderResponse.class);
+
         } catch (Exception e) {
+            logger.error("Failed to parse payment provider response body", e);
             throw new PaymentProviderApiException(e);
         }
 
