@@ -125,11 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setPayment(payment);
             transaction = movementRepository.save(transaction);
 
-        } catch (UserNotFoundException e) {
-            logger.error("User does not exist", e);
-            throw e;
-
-        } catch (TransactionException e) {
+        } catch (UserNotFoundException | TransactionException e) {
             throw e;
 
         } catch (Exception e) {
