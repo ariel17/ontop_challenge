@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MovementMapperTest {
 
@@ -54,21 +55,63 @@ public class MovementMapperTest {
     }
 
     private void compare(Movement movement, MovementEntity entity) {
-        // TODO assert not null, not only equals
+        assertNotNull(movement.getId());
+        assertNotNull(entity.getId());
         assertEquals(movement.getId(), entity.getId());
+
+        assertNotNull(movement.getUserId());
+        assertNotNull(entity.getUserId());
         assertEquals(movement.getUserId(), entity.getUserId());
+
+        assertNotNull(movement.getType());
+        assertNotNull(entity.getType());
         assertEquals(movement.getType(), entity.getType());
+
+        assertNotNull(movement.getOperation());
+        assertNotNull(entity.getOperation());
         assertEquals(movement.getOperation(), entity.getOperation());
+
+        assertNotNull(movement.getCurrency());
+        assertNotNull(entity.getCurrency());
         assertEquals(movement.getCurrency(), entity.getCurrency());
+
+        assertNotNull(movement.getAmount());
+        assertNotNull(entity.getAmount());
         assertEquals(movement.getAmount(), entity.getAmount());
+
+        assertNotNull(movement.getFrom().getRouting());
+        assertNotNull(entity.getFromRouting());
         assertEquals(movement.getFrom().getRouting(), entity.getFromRouting());
+
+        assertNotNull(movement.getFrom().getAccount());
+        assertNotNull(entity.getFromAccount());
         assertEquals(movement.getFrom().getAccount(), entity.getFromAccount());
+
+        assertNotNull(movement.getFrom().getCurrency());
+        assertNotNull(entity.getCurrency());
         assertEquals(movement.getFrom().getCurrency(), entity.getCurrency());
+
+        assertNotNull(movement.getTo().getRouting());
+        assertNotNull(entity.getToRouting());
         assertEquals(movement.getTo().getRouting(), entity.getToRouting());
+
+        assertNotNull(movement.getTo().getAccount());
+        assertNotNull(entity.getToAccount());
         assertEquals(movement.getTo().getAccount(), entity.getToAccount());
+
+        assertNotNull(movement.getTo().getCurrency());
         assertEquals(movement.getTo().getCurrency(), entity.getCurrency());
+
+        assertNotNull(movement.getWalletTransactionId());
+        assertNotNull(entity.getWalletTransactionId());
         assertEquals(movement.getWalletTransactionId(), entity.getWalletTransactionId());
+
+        assertNotNull(movement.getPaymentId());
+        assertNotNull(entity.getPaymentId());
         assertEquals(movement.getPaymentId(), entity.getPaymentId());
+
+        assertNotNull(movement.getCreatedAt());
+        assertNotNull(entity.getCreatedAt());
         assertEquals(movement.getCreatedAt(), entity.getCreatedAt());
     }
 }
