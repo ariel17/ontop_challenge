@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -27,9 +26,11 @@ public class MovementEntity {
     private Long userId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MovementType type;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Operation operation;
 
     @Column(nullable = false, length = 3)
@@ -53,7 +54,7 @@ public class MovementEntity {
     @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private PaymentEntity payment;
 
-    @Column(name = "created_at", insertable = false)
-    @CreationTimestamp
+    @Column(name = "created_at", insertable = false, updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 }

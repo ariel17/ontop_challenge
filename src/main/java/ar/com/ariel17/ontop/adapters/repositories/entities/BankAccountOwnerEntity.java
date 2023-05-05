@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Currency;
 import java.util.Date;
@@ -35,6 +34,7 @@ public class BankAccountOwnerEntity {
     private String account;
 
     @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private BankAccountType type;
 
     @Column(nullable = false, length = 3)
@@ -49,7 +49,7 @@ public class BankAccountOwnerEntity {
     @Column(name = "last_name", length = 20)
     private String lastName;
 
-    @Column(name = "created_at", insertable = false)
-    @CreationTimestamp
+    @Column(name = "created_at", insertable = false, updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 }
