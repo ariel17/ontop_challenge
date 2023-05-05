@@ -41,7 +41,7 @@ public class MovementEntity {
     @JoinColumn(name = "ontop_account_id", referencedColumnName = "id")
     private BankAccountOwnerEntity onTopAccount;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "external_account_id", referencedColumnName = "id")
     private BankAccountOwnerEntity externalAccount;
 
