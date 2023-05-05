@@ -3,9 +3,14 @@ package ar.com.ariel17.ontop;
 import ar.com.ariel17.ontop.adapters.repositories.LockRepositoryImpl;
 import ar.com.ariel17.ontop.core.domain.BankAccount;
 import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
+import ar.com.ariel17.ontop.core.domain.BankAccountType;
+import ar.com.ariel17.ontop.core.repositories.BankAccountRepository;
 import ar.com.ariel17.ontop.core.repositories.LockRepository;
 import ar.com.ariel17.ontop.core.services.TransactionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationContext;
@@ -23,10 +28,14 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Currency;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
+
 @Configuration
 public class AppConfig implements ApplicationContextAware {
 
     private static final String LOCK_NAME = "lock";
+
+    private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
 
     private ApplicationContext context;
 
@@ -72,6 +81,9 @@ public class AppConfig implements ApplicationContextAware {
     @Value("${wallet.read_timeout_ms}")
     private int walletReadTimeout;
 
+    @Autowired
+    private BankAccountRepository bankAccountRepository;
+
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         this.context = context;
@@ -83,20 +95,25 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
+    @Scope(SCOPE_SINGLETON)
     public BankAccountOwner onTopBankAccount() {
         BankAccount account = BankAccount.builder().
                 routing(onTopRoutingNumber).
                 account(onTopAccountNumber).
+                type(BankAccountType.valueOf(onTopAccountType)).
                 currency(Currency.getInstance(onTopCurrencyCode)).
                 build();
 
-        return BankAccountOwner.builder().
+        BankAccountOwner onTopAccount = BankAccountOwner.builder().
                 userId(0L).
                 bankAccount(account).
-                idNumber("").
                 firstName(onTopName).
-                lastName("").
                 build();
+
+        onTopAccount = bankAccountRepository.save(onTopAccount);
+
+        logger.info("OnTop account to use: {}", onTopAccount);
+        return onTopAccount;
     }
 
     @Bean
@@ -124,6 +141,7 @@ public class AppConfig implements ApplicationContextAware {
         return builder.
                 setConnectTimeout(Duration.ofMillis(paymentProviderConnectionTimeout)).
                 setReadTimeout(Duration.ofMillis(paymentProviderReadTimeout)).
+                rootUri(paymentProviderHost).
                 build();
     }
 
