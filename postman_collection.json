@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "0baa1272-fd6f-47a6-a3c6-b47dd7cdd8b2",
+		"name": "OnTop challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16445484"
+	},
+	"item": [
+		{
+			"name": "Transfer INVALID without user_id",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Snow\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer INVALID by missing fields in recipient",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer OK with full recipient",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Snow\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer OK with full recipient and no currency",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Snow\",\n        \"account\": {\n            \"account_number\": \"024527777\",\n            \"routing_number\": \"028444888\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer OK with only recipient_id (if exists)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 500,\n    \"recipient_id\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer FAILED by invalid amount",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": -500,\n    \"recipient_id\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer FAILED by insufficient balance",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 5500,\n    \"recipient_id\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer FAILED by user_id not found",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 404,\n    \"currency\": \"USD\",\n    \"amount\": 500,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Snow\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer FAILED by wallet transaction error",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 500,\n    \"currency\": \"USD\",\n    \"amount\": 500,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"John\",\n        \"last_name\": \"Snow\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer REVERTED with payment failed",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"FAILED\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer REVERTED with payment timeout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"TIMEOUT\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8090/transfers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8090",
+					"path": [
+						"transfers"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
