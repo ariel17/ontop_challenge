@@ -10,7 +10,11 @@ import java.util.Currency;
 import java.util.Date;
 
 @Entity
-@Table(name = "bank_accounts")
+@Table(name = "bank_accounts",
+        uniqueConstraints = {@UniqueConstraint(
+                name = "user_id_routing_account",
+                columnNames = {"user_id", "routing", "account"}
+        )})
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
