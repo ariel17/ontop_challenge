@@ -29,10 +29,13 @@ public class BankAccountOwnerRepositoryImplTest {
 
     private Long ownerId;
 
+    private Long userId;
+
     @BeforeEach
     public void setUp() {
         repository = new BankAccountRepositoryImpl(jpaRepository);
         ownerId = 1000L;
+        userId = 999L;
 
         BankAccount account = BankAccount.builder().
                 routing("0123456789").
@@ -41,7 +44,7 @@ public class BankAccountOwnerRepositoryImplTest {
                 build();
         owner = BankAccountOwner.builder().
                 id(ownerId).
-                userId(999L).
+                userId(userId).
                 bankAccount(account).
                 idNumber("123ABC").
                 firstName("John").
@@ -56,10 +59,10 @@ public class BankAccountOwnerRepositoryImplTest {
     }
 
     @Test
-    public void testGetById_ok() throws BankAccountOwnerNotFoundException {
+    public void testGetByIdAndUserId_ok() throws BankAccountOwnerNotFoundException {
         BankAccountOwnerEntity entity = BankAccountOwnerMapper.INSTANCE.bankAccountOwnerToBankAccountOwnerEntity(owner);
         when(jpaRepository.findById(eq(ownerId))).thenReturn(Optional.of(entity));
-        repository.getById(ownerId);
+        repository.getByIdAndUserId(ownerId, userId);
         verify(jpaRepository, times(1)).findById(eq(ownerId));
     }
 }

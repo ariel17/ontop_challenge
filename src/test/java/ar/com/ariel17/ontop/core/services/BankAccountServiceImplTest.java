@@ -31,9 +31,12 @@ public class BankAccountServiceImplTest {
 
     private Long ownerId;
 
+    private Long userId;
+
     @BeforeEach
     public void setUp() {
         ownerId = 1234L;
+        userId = 9999L;
         BankAccount account = BankAccount.builder().
                 account("0123456789").
                 routing("012345678").
@@ -55,17 +58,17 @@ public class BankAccountServiceImplTest {
     }
 
     @Test
-    public void testGetById_found() throws BankAccountOwnerNotFoundException {
-        when(repository.getById(eq(ownerId))).thenReturn(owner);
-        var o = service.getById(ownerId);
+    public void testGetByIdAndUserId_found() throws BankAccountOwnerNotFoundException {
+        when(repository.getByIdAndUserId(eq(ownerId), eq(userId))).thenReturn(owner);
+        var o = service.getByIdAndUserId(ownerId, userId);
         assertNotNull(o);
-        verify(repository, times(1)).getById(eq(ownerId));
+        verify(repository, times(1)).getByIdAndUserId(eq(ownerId), eq(userId));
     }
 
     @Test
     public void testGetById_notPresent() throws BankAccountOwnerNotFoundException {
-        doThrow(new BankAccountOwnerNotFoundException("not found")).when(repository).getById(eq(ownerId));
-        assertThrows(BankAccountOwnerNotFoundException.class, () -> service.getById(ownerId));
-        verify(repository, times(1)).getById(eq(ownerId));
+        doThrow(new BankAccountOwnerNotFoundException("not found")).when(repository).getByIdAndUserId(eq(ownerId), eq(userId));
+        assertThrows(BankAccountOwnerNotFoundException.class, () -> service.getByIdAndUserId(ownerId, userId));
+        verify(repository, times(1)).getByIdAndUserId(eq(ownerId), eq(userId));
     }
 }
