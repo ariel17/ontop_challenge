@@ -40,13 +40,13 @@ public class BankAccountOwnerEntity {
     @Column(nullable = false, length = 3)
     private Currency currency;
 
-    @Column(name = "id_number", nullable = false, length = 15)
+    @Column(name = "id_number", length = 15)
     private String idNumber;
 
     @Column(name = "first_name", nullable = false, length = 20)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 20)
+    @Column(name = "last_name", length = 20)
     private String lastName;
 
     @Column(name = "created_at", insertable = false)
