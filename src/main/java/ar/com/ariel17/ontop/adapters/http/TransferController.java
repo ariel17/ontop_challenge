@@ -10,9 +10,7 @@ import ar.com.ariel17.ontop.core.services.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Currency;
@@ -31,6 +29,8 @@ public class TransferController {
     }
 
     @PostMapping("/transfers")
+    @ResponseStatus( HttpStatus.CREATED )
+    @ResponseBody
     public TransferResponse createTransfer(@Valid @RequestBody TransferRequest request) {
         if (request.getRecipientId() != null && request.getRecipient() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Use recipient_id or recipient, not both");
