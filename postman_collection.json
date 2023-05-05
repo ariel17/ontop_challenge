@@ -280,7 +280,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"FAILED\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"FAILED\",\n        \"account\": {\n            \"account_number\": \"024521111\",\n            \"routing_number\": \"028444222\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8090/transfers",
@@ -309,7 +309,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"TIMEOUT\",\n        \"account\": {\n            \"account_number\": \"024525555\",\n            \"routing_number\": \"028444666\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
+					"raw": "{\n    \"user_id\": 1000,\n    \"currency\": \"USD\",\n    \"amount\": 1000,\n    \"recipient\": {\n        \"id_number\": \"123ABC\",\n        \"first_name\": \"JAMES\",\n        \"last_name\": \"TIMEOUT\",\n        \"account\": {\n            \"account_number\": \"024523333\",\n            \"routing_number\": \"028444444\",\n            \"currency\": \"USD\"\n        }\n    }\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8090/transfers",
