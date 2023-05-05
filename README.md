@@ -1,3 +1,5 @@
+![Status badge](https://github.com/ariel17/ontop_challenge/actions/workflows/gradle.yml/badge.svg)
+
 # OnTop Home Challenge
 
 Hi there! This is my implementation for the proposed home challenge. [Read the
