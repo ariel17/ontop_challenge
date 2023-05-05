@@ -13,6 +13,9 @@ $ ./gradlew bootRun
 $ docker-compose up  # use -d to detach
 ```
 
+Once up and running you can use the `postman_collection.json` to import use case
+examples.
+
 ## Diagrams
 
 ### Archicture
