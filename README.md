@@ -1,4 +1,4 @@
-![Status badge](https://github.com/ariel17/ontop_challenge/actions/workflows/gradle.yml/badge.svg)
+![Status badge](https://github.com/ariel17/ontop_challenge/actions/workflows/gradle.yml/badge.svg) ![Coverage](.github/badges/jacoco.svg)
 
 # OnTop Home Challenge
 
