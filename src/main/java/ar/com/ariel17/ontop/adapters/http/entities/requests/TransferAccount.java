@@ -24,12 +24,12 @@ public class TransferAccount {
 
     @JsonProperty("routing_number")
     @NotNull(message = "Routing number cannot be null")
-    @Size(min = 9, max = 9, message = "Routing number is 9 digit string")
+    @Size(min = 8, message = "Routing number needs to be at least 8 digits")
     private String routingNumber;
 
     @JsonProperty("account_number")
     @NotNull(message = "Account number cannot be null")
-    @Size(min = 9, max = 9, message = "Account number is 9 digit string")
+    @Size(min = 8, message = "Account number needs to be at least 8 digits")
     private String accountNumber;
 
     private Currency currency;
