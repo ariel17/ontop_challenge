@@ -2,6 +2,7 @@ package ar.com.ariel17.ontop.adapters.http.entities.responses;
 
 import ar.com.ariel17.ontop.core.domain.Operation;
 import ar.com.ariel17.ontop.core.domain.MovementType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,6 @@ public class TransferMovement {
     private BigDecimal amount;
 
     @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 }
