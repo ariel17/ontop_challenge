@@ -22,8 +22,9 @@ import java.math.BigDecimal;
 @Component
 public class PaymentProviderApiClientImpl extends ApiClient implements PaymentProviderApiClient {
 
+    public static final String PAYMENT_URI = "/api/v1/payments";
+
     private static final Logger logger = LoggerFactory.getLogger(PaymentProviderApiClientImpl.class);
-    protected static final String PAYMENT_URI = "/api/v1/payments";
 
     private PaymentProviderMapper providerMapper;
 
