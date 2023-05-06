@@ -20,9 +20,9 @@ import java.math.BigDecimal;
 @Component
 public class WalletApiClientImpl extends ApiClient implements WalletApiClient {
 
-    private static final String BALANCE_URI_TEMPLATE = "/wallets/balance?user_id=%d";
+    public static final String BALANCE_URI_TEMPLATE = "/wallets/balance?user_id=%d";
 
-    protected static final String TRANSACTIONS_URI = "/wallets/transactions";
+    public static final String TRANSACTIONS_URI = "/wallets/transactions";
 
     @Autowired
     public WalletApiClientImpl(RestTemplate walletRestTemplate) {
