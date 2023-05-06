@@ -109,7 +109,10 @@ public class TransactionServiceImpl implements TransactionService {
                 return movementRepository.save(transaction);
 
             } finally {
-                payment = paymentRepository.save(payment);
+                if (payment != null) {
+                    logger.info("Payment object to save: {}", payment);
+                    payment = paymentRepository.save(payment);
+                }
             }
 
             logger.info("Transfer from provider completed: user_id={}, payment={}", userId, payment);
