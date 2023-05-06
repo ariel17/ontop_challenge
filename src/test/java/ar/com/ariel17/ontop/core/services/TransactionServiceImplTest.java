@@ -102,7 +102,7 @@ public class TransactionServiceImplTest {
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         UUID paymentId = UUID.randomUUID();
-        Payment payment = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
+        Payment payment = new Payment(paymentId, new BigDecimal(3999), PaymentStatus.PROCESSING, null, null);
         when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(payment);
 
         when(paymentRepository.save(eq(payment))).thenAnswer(i -> i.getArguments()[0]);
@@ -245,7 +245,7 @@ public class TransactionServiceImplTest {
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         UUID paymentId = UUID.randomUUID();
-        Payment response = new Payment(paymentId, new BigDecimal(3999), "error", "error", null);
+        Payment response = new Payment(paymentId, new BigDecimal(3999), PaymentStatus.FAILED, "error", null);
         when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(response);
 
         when(paymentRepository.save(eq(response))).thenAnswer(i -> i.getArguments()[0]);
@@ -299,7 +299,7 @@ public class TransactionServiceImplTest {
         when(walletAPIClient.createTransaction(eq(userId), eq(total))).thenReturn(walletTransactionId);
 
         UUID paymentId = UUID.randomUUID();
-        Payment response = new Payment(paymentId, new BigDecimal(3999), "ok", null, null);
+        Payment response = new Payment(paymentId, new BigDecimal(3999), PaymentStatus.PROCESSING, null, null);
         when(paymentProviderAPIClient.createPayment(eq(onTopAccount), eq(recipient), eq(amount))).thenReturn(response);
 
         when(paymentRepository.save(eq(response))).thenAnswer(i -> i.getArguments()[0]);

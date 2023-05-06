@@ -1,10 +1,7 @@
 package ar.com.ariel17.ontop.adapters.clients;
 
 import ar.com.ariel17.ontop.core.clients.PaymentProviderApiException;
-import ar.com.ariel17.ontop.core.domain.BankAccount;
-import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
-import ar.com.ariel17.ontop.core.domain.BankAccountType;
-import ar.com.ariel17.ontop.core.domain.Payment;
+import ar.com.ariel17.ontop.core.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -123,7 +120,7 @@ public class PaymentProviderApiClientImplTest {
         Payment payment = client.createPayment(onTopAccount, externalAccount, amount);
         verify(client, times(1)).post(eq(PaymentProviderApiClientImpl.PAYMENT_URI), eq(requestBody));
 
-        assertEquals("Processing", payment.getStatus());
+        assertEquals(PaymentStatus.PROCESSING, payment.getStatus());
         assertEquals(new BigDecimal(1000), payment.getAmount());
         assertNotNull(payment.getId());
     }

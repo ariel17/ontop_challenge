@@ -41,7 +41,7 @@ public class MovementMapperTest {
 
         Payment payment = Payment.builder().
                 id(UUID.randomUUID()).
-                status("ok").
+                status(PaymentStatus.PROCESSING).
                 createdAt(new Date()).
                 amount(new BigDecimal(1000)).build();
 
