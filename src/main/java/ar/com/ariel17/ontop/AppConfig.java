@@ -90,6 +90,7 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean
+    @Scope(SCOPE_SINGLETON)
     public Currency defaultCurrency() {
         return Currency.getInstance(onTopCurrencyCode);
     }
@@ -112,17 +113,19 @@ public class AppConfig implements ApplicationContextAware {
 
         onTopAccount = bankAccountRepository.save(onTopAccount);
 
-        logger.info("OnTop account to use: {}", onTopAccount);
+        logger.info("OnTop default account to use: {}", onTopAccount);
         return onTopAccount;
     }
 
     @Bean
+    @Scope(SCOPE_SINGLETON)
     public TransactionFactory transactionFactory() {
         BigDecimal percent = new BigDecimal(feePercent);
         return new TransactionFactory(percent);
     }
 
     @Bean(destroyMethod = "destroy")
+    @Scope(SCOPE_SINGLETON)
     public ExpirableLockRegistry redisLockRegistry(RedisConnectionFactory redisConnectionFactory) {
         var releaseTime = Duration.ofSeconds(lockReleaseTimeSeconds).toMillis();
         return new RedisLockRegistry(redisConnectionFactory, LOCK_NAME, releaseTime);
@@ -137,6 +140,7 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean(name = "paymentProviderRestTemplate")
+    @Scope(SCOPE_SINGLETON)
     public RestTemplate paymentProviderRestTemplate(RestTemplateBuilder builder) {
         return builder.
                 setConnectTimeout(Duration.ofMillis(paymentProviderConnectionTimeout)).
@@ -146,6 +150,7 @@ public class AppConfig implements ApplicationContextAware {
     }
 
     @Bean(name = "walletRestTemplate")
+    @Scope(SCOPE_SINGLETON)
     public RestTemplate walletRestTemplate(RestTemplateBuilder builder) {
         return builder.
                 setConnectTimeout(Duration.ofMillis(walletConnectionTimeout)).
