@@ -1,6 +1,7 @@
 package ar.com.ariel17.ontop.adapters.repositories.entities;
 
 import ar.com.ariel17.ontop.core.domain.Payment;
+import ar.com.ariel17.ontop.core.domain.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class PaymentMapperTest {
         payment = Payment.builder().
                 id(UUID.randomUUID()).
                 amount(new BigDecimal("1000.01")).
-                status("error").
+                status(PaymentStatus.PROCESSING).
                 error("This is an error description").
                 createdAt(new Date()).
                 build();

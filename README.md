@@ -15,6 +15,10 @@ $ ./gradlew bootRun
 $ docker-compose up  # use -d to detach
 ```
 
+⚠ Warning: when using compose, MySQL has a lot of things to do before being
+ready to accept connections. If the application fails to start, be patient, do
+^C and run the `up` command again.
+
 Once up and running you can use the `postman_collection.json` to import use case
 examples.
 

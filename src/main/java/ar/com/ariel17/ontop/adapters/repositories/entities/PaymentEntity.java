@@ -1,5 +1,6 @@
 package ar.com.ariel17.ontop.adapters.repositories.entities;
 
+import ar.com.ariel17.ontop.core.domain.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,8 @@ public class PaymentEntity {
     private BigDecimal amount;
 
     @Column(nullable = false, length = 15)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(length = 30)
     private String error;

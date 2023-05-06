@@ -9,13 +9,13 @@ public class PaymentTest {
 
     @Test
     public void testIsError_notError() {
-        Payment p = new Payment(null, null, "ok", null, null);
+        Payment p = new Payment(null, null, PaymentStatus.PROCESSING, null, null);
         assertFalse(p.isError());
     }
 
     @Test
     public void testIsError_error() {
-        Payment p = new Payment(null, null, "whatever", "oh my god what we've done", null);
+        Payment p = new Payment(null, null, PaymentStatus.FAILED, "oh my god what we've done", null);
         assertTrue(p.isError());
     }
 }

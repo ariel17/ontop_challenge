@@ -3,6 +3,7 @@ package ar.com.ariel17.ontop.adapters.repositories;
 import ar.com.ariel17.ontop.adapters.repositories.entities.PaymentEntity;
 import ar.com.ariel17.ontop.adapters.repositories.jpa.JpaPaymentRepository;
 import ar.com.ariel17.ontop.core.domain.Payment;
+import ar.com.ariel17.ontop.core.domain.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ public class PaymentRepositoryImplTest {
     @BeforeEach
     public void setUp() {
         repository = new PaymentRepositoryImpl(jpaRepository);
-        payment = new Payment(null, new BigDecimal(1000), "whatever", "oh my god what we've done", null);
+        payment = new Payment(null, new BigDecimal(1000), PaymentStatus.FAILED, "oh my god what we've done", null);
     }
 
     @Test

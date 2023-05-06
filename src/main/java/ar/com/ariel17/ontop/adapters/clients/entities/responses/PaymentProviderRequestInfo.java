@@ -1,5 +1,6 @@
 package ar.com.ariel17.ontop.adapters.clients.entities.responses;
 
+import ar.com.ariel17.ontop.core.domain.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentProviderRequestInfo {
 
-    private String status;
+    private PaymentStatus status;
 
     private String error;
 }

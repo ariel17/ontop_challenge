@@ -70,7 +70,7 @@ public class TransactionTest {
 
         payment = Payment.builder().
                 id(UUID.randomUUID()).
-                status("ok").build();
+                status(PaymentStatus.PROCESSING).build();
 
         t = new Transaction();
     }

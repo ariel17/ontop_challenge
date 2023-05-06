@@ -64,7 +64,7 @@ public class TransferMapperTest {
 
         Payment payment = Payment.builder().
                 id(UUID.randomUUID()).
-                status("error").
+                status(PaymentStatus.FAILED).
                 error("Error description").
                 createdAt(new Date()).
                 build();

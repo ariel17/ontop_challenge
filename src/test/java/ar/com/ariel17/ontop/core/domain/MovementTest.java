@@ -52,7 +52,7 @@ public class MovementTest {
         walletTransactionId = 1234L;
         payment = Payment.builder().
                 id(UUID.randomUUID()).
-                status("ok").build();
+                status(PaymentStatus.PROCESSING).build();
     }
 
     @Test

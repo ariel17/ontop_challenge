@@ -1,6 +1,7 @@
 package ar.com.ariel17.ontop.adapters.http.entities.responses;
 
 import ar.com.ariel17.ontop.core.domain.Operation;
+import ar.com.ariel17.ontop.core.domain.PaymentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class TransferResponse {
     @JsonProperty("user_id")
     private Long userId;
 
-    private String status;
+    private PaymentStatus status;
 
     private Operation operation;
 

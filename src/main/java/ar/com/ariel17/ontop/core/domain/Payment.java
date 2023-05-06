@@ -22,7 +22,7 @@ public class Payment implements Serializable {
 
     private BigDecimal amount;
 
-    private String status;
+    private PaymentStatus status;
 
     private String error;
 

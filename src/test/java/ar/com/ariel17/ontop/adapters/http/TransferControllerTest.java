@@ -77,7 +77,7 @@ public class TransferControllerTest {
 
         Payment payment = Payment.builder().
                 id(UUID.randomUUID()).
-                status("ok").
+                status(PaymentStatus.PROCESSING).
                 createdAt(new Date()).build();
 
         transaction = new Transaction();
