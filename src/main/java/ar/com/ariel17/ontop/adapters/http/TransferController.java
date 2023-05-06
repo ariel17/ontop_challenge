@@ -19,6 +19,8 @@ import java.util.Currency;
 @RestController
 public class TransferController {
 
+    public static final String TRANSFERS_URI = "/transfers";
+
     private TransactionService service;
 
     private TransferMapper mapper;
@@ -29,7 +31,7 @@ public class TransferController {
         mapper = new TransferMapper(defaultCurrency);
     }
 
-    @PostMapping("/transfers")
+    @PostMapping(TRANSFERS_URI)
     @ResponseStatus( HttpStatus.CREATED )
     @ResponseBody
     public TransferResponse createTransfer(@Valid @RequestBody TransferRequest request) {
