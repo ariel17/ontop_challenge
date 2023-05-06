@@ -3,10 +3,7 @@ package ar.com.ariel17.ontop.adapters.http;
 import ar.com.ariel17.ontop.adapters.http.entities.requests.TransferRequest;
 import ar.com.ariel17.ontop.adapters.http.entities.responses.TransferMovement;
 import ar.com.ariel17.ontop.adapters.http.entities.responses.TransferResponse;
-import ar.com.ariel17.ontop.core.domain.BankAccount;
-import ar.com.ariel17.ontop.core.domain.BankAccountOwner;
-import ar.com.ariel17.ontop.core.domain.Operation;
-import ar.com.ariel17.ontop.core.domain.Transaction;
+import ar.com.ariel17.ontop.core.domain.*;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
@@ -73,9 +70,16 @@ public class TransferMapper {
             });
         }};
 
+        PaymentStatus paymentStatus;
+        if (transaction.getPayment() != null) {
+            paymentStatus = transaction.getPayment().getStatus();
+        } else {
+            paymentStatus = PaymentStatus.FAILED;
+        }
+
         return TransferResponse.builder().
                 userId(userId).
-                status(transaction.getPayment().getStatus()).
+                status(paymentStatus).
                 operation(operation).
                 movements(movements).
                 recipientId(transaction.getExternalAccount().getId()).
