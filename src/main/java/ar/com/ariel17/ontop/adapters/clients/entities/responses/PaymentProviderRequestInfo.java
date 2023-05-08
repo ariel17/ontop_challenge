@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Payment provider request data body.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

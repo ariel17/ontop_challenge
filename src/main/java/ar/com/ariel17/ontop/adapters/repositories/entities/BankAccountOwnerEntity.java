@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.util.Currency;
 import java.util.Date;
 
+/**
+ * The bank account model representation on storage.
+ */
 @Entity
 @Table(name = "bank_accounts",
         uniqueConstraints = {@UniqueConstraint(

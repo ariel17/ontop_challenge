@@ -13,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.Currency;
 
+/**
+ * The recipient bank account details.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

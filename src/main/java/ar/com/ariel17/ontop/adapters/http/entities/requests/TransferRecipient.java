@@ -10,6 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+/**
+ * The recipient data where to tranfer the money.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

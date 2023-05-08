@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Payment provider response. It works on successful and on error responses.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

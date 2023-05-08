@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+/**
+ * Wallet API client methods for implementors.
+ */
 @Component
 public interface WalletApiClient {
 

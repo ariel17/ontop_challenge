@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+/**
+ * Wallet API balance endpoint response when successful.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

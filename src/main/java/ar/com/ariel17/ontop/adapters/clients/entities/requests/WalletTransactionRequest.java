@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+/**
+ * Wallet API body for transaction endpoint.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

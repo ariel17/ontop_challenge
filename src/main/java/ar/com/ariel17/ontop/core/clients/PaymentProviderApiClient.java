@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+/**
+ * Payment provider API client contract for implementors.
+ */
 @Component
 public interface PaymentProviderApiClient {
 

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Payment provider payment info response.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

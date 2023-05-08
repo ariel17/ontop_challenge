@@ -6,6 +6,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
+/**
+ * Abstract implementation to be reused by API client callers.
+ */
 public abstract class ApiClient {
 
     protected RestTemplate restTemplate;

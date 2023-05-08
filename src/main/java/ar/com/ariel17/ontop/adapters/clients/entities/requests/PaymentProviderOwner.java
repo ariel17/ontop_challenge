@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+/**
+ * Payment provider API body for owner data.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

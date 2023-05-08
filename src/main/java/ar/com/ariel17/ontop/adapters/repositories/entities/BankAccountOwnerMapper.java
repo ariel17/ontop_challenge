@@ -5,6 +5,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * Back account owner entity and model mapper, back and forth.
+ */
 @Mapper
 public interface BankAccountOwnerMapper {
 

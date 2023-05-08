@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * The REST API transfer operation response. It shows the operation type
+ * (withdraw, topup, revert), the status by provider, the recipient used for
+ * transfer and the movement details.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -43,6 +43,23 @@ public class TransactionServiceImpl implements TransactionService {
 
     private MovementRepository movementRepository;
 
+    /**
+     * This is main business logic. The transfer operation takes money from the
+     * virtual wallet and then transfers it from the OnTop bank account to the
+     * indicated recipient. If the recipient already exists, it's fetched from
+     * the storage, otherwise saved. The user has to have enough balance to
+     * execute the required transfer, not only by amount but also by fee.
+     *
+     * @param userId    The user ID that creates the transfer.
+     * @param recipient The bank account owner data to transfer money to.
+     * @param amount    The amount of money to egress.
+     * @return
+     * @throws BankAccountOwnerNotFoundException When the bank account indicated
+     * does not exist or not belong to the user ID.
+     * @throws UserNotFoundException When wallet indicates that the user ID does
+     * not exist.
+     * @throws TransactionException For inner services errors not listed.
+     */
     @Override
     public Transaction transfer(
             Long userId, BankAccountOwner recipient, BigDecimal amount

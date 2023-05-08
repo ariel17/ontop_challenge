@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+/**
+ * Payment provider API body request to execute payment between accounts.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

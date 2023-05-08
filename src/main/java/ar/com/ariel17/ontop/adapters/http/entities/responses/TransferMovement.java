@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
+/**
+ * Movement details for REST API response.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

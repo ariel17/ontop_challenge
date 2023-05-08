@@ -15,6 +15,10 @@ import org.springframework.validation.annotation.Validated;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+/**
+ * The REST API request body required. It contains the recipient data or id and
+ * details about the amount of money to transfer.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

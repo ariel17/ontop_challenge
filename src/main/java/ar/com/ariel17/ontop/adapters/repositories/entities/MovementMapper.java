@@ -7,6 +7,9 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+/**
+ * The Movement entity and model mapper, back and forth.
+ */
 @Mapper
 public interface MovementMapper {
 

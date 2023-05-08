@@ -1,5 +1,8 @@
 package ar.com.ariel17.ontop.core.clients;
 
+/**
+ * Payment provider exception for error scenarios.
+ */
 public class PaymentProviderApiException extends Exception {
 
     public PaymentProviderApiException(String message) {

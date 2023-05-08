@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+/**
+ * Maps recipient data from request to bank account owner and the transaction
+ * model result into the API response.
+ */
 @AllArgsConstructor
 public class TransferMapper {
 

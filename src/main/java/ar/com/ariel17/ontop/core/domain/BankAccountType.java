@@ -1,5 +1,9 @@
 package ar.com.ariel17.ontop.core.domain;
 
+/**
+ * Bank account types availables for external payment providers as source
+ * account.
+ */
 public enum BankAccountType {
 
     COMPANY("COMPANY");

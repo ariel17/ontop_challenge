@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Currency;
 
+/**
+ * Payment provider API body for account data.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

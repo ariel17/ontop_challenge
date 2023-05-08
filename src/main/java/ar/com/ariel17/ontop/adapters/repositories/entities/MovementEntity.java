@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
+/**
+ * Movement model representation in storage.
+ */
 @Entity
 @Table(name = "movements")
 @AllArgsConstructor

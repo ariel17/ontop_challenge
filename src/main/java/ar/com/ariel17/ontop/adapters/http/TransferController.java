@@ -16,6 +16,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Currency;
 
+/**
+ * The transfer REST API controller. This is the only endpoint in the
+ * application. Creates the transfer operation between the virtual wallet and
+ * the indicated recipient, if valid.
+ */
 @RestController
 public class TransferController {
 

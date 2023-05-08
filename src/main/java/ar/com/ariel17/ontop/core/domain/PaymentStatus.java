@@ -2,6 +2,9 @@ package ar.com.ariel17.ontop.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * External payment provider statuses.
+ */
 public enum PaymentStatus {
 
     @JsonProperty("Processing")
